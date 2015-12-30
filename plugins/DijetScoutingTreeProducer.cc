@@ -14,7 +14,22 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     srcRho_(consumes<double>(cfg.getParameter<InputTag>("rho"))),
     srcMET_(consumes<double>(cfg.getParameter<InputTag>("met")))
 {
+    if (doJECs_) {
+        L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4_DATA");
+        L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4_DATA");
+        L3corrAK4_DATA_ = cfg.getParameter<FileInPath>("L3corrAK4_DATA");
 
+        L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
+        L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
+        L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
+
+        vector<JetCorrectorParameters> vParAK4_DATA;
+        vParAK4_DATA.push_back(*L1ParAK4_DATA);
+        vParAK4_DATA.push_back(*L2ParAK4_DATA);
+        vParAK4_DATA.push_back(*L3ParAK4_DATA);
+
+        JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+    }
 }
 
 DijetScoutingTreeProducer::~DijetScoutingTreeProducer()
@@ -150,7 +165,25 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
     if(doJECs_) {
+        // Sort AK4 jets by increasing pT
+        std::multimap<double, unsigned> sortedAK4Jets;
+        for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
+            ijet!=jetsAK4->end(); ++ijet) {
+            double correction = 1.0;
+            JetCorrectorAK4_DATA->setJetEta(ijet->eta());
+            JetCorrectorAK4_DATA->setJetPt(ijet->pt());
+            JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
+            JetCorrectorAK4_DATA->setRho(rho_);
+            correction = JetCorrectorAK4_DATA->getCorrection();
 
+            jecFactorsAK4.push_back(correction);
+            sortedAK4Jets.insert(std::make_pair(ijet->pt()*correction,
+                                                ijet - jetsAK4->begin()));
+        }
+        // Get jet indices in decreasing pT order
+        for (std::multimap<double, unsigned>::const_reverse_iterator it=sortedAK4Jets.rbegin();
+             it!=sortedAK4Jets.rend(); ++it)
+            sortedAK4JetIdx.push_back(it->second);
     } else {
         for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
             ijet!=jetsAK4->end(); ++ijet) {

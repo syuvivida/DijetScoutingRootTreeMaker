@@ -68,7 +68,11 @@ process.dijetscouting = cms.EDAnalyzer(
     vtx      = cms.InputTag('hltScoutingPFPacker'),
 
     ## JECs ################
-    doJECs = cms.bool(False)
+    doJECs = cms.bool(True),
+
+    L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1_L1FastJet_AK4PFHLT.txt'),
+    L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1_L2Relative_AK4PFHLT.txt'),
+    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt')
 )
 
 
