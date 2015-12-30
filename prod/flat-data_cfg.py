@@ -61,11 +61,14 @@ process.source = cms.Source(
 process.dijetscouting = cms.EDAnalyzer(
     'DijetScoutingTreeProducer',
     ## JETS/MET ########################################
-    jetsAK4 = cms.InputTag('hltScoutingPFPacker'),
-    ptMinAK4         = cms.double(10),
+    jetsAK4  = cms.InputTag('hltScoutingPFPacker'),
+    ptMinAK4 = cms.double(10),
+    rho      = cms.InputTag('hltScoutingPFPacker:rho'),
+    met      = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
+    vtx      = cms.InputTag('hltScoutingPFPacker'),
 
     ## JECs ################
-    doJECs  = cms.bool(False)
+    doJECs = cms.bool(False)
 )
 
 

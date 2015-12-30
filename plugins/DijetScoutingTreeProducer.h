@@ -65,9 +65,11 @@ private:
     //---- configurable parameters --------
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;
     edm::EDGetTokenT<ScoutingPFJetCollection> srcJetsAK4_;
+    edm::EDGetTokenT<ScoutingVertexCollection> srcVrtx_;
+    edm::EDGetTokenT<double> srcRho_, srcMET_;
     edm::InputTag srcJetsAK4Calo_, srcJetsAK4PFCluster_,
-        srcJetsAK4PFCalo_, srcJetsAK8_, srcJetsCA8_, srcRho_, srcMET_, srcPU_,
-        srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_,
+        srcJetsAK4PFCalo_, srcJetsAK8_, srcJetsCA8_, srcPU_,
+        srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_,
         srcPrunedGenParticles_;
     edm::Service<TFileService> fs_;
     TTree *outTree_;
