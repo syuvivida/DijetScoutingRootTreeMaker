@@ -161,6 +161,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     evt_  = iEvent.id().event();
     lumi_ = iEvent.id().luminosityBlock();
 
+    double sumEt = 0.0;
+
     //-------------- Jets -----------------------------------------
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
@@ -231,6 +233,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         float eta  = ijet->eta();
         float pt   = ijet->pt()*jecFactorsAK4.at(*i);
+        sumEt += pt;
 
         // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
         int idL = (nhf < 0.99 && nemf < 0.99 && NumConst > 1)
@@ -277,6 +280,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         dEtajjAK4_ = fabs(etaAK4_->at(0) - etaAK4_->at(1));
         dPhijjAK4_ = fabs(deltaPhi(phiAK4_->at(0), phiAK4_->at(1)));
     }
+
+    metSig_ = *met/sumEt;
 
     //---- Fill Tree ---
     outTree_->Fill();
