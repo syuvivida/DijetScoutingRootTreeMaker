@@ -2,6 +2,7 @@
 #define DIJETSCOUTINGROOTTREEMAKER_DIJETSCOUTINGTREEPRODUCER_H
 
 // System include files
+#include <iostream>
 #include <vector>
 
 // CMSSW include files
@@ -19,6 +20,9 @@
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
+#include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
+#include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
+#include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
 
 // Root include files
 #include "TLorentzVector.h"
@@ -75,10 +79,10 @@ private:
     TTree *outTree_;
 
     //---- TRIGGER -------------------------
-    /* triggerExpression::Data triggerCache_; */
-    /* std::vector<triggerExpression::Evaluator*> vtriggerSelector_; */
-    /* std::vector<std::string> vtriggerAlias_, vtriggerSelection_; */
-    /* TH1F *triggerPassHisto_, *triggerNamesHisto_, *puHisto_; */
+    triggerExpression::Data triggerCache_;
+    std::vector<triggerExpression::Evaluator*> vtriggerSelector_;
+    std::vector<std::string> vtriggerAlias_, vtriggerSelection_;
+    TH1F *triggerPassHisto_, *triggerNamesHisto_, *puHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
     int   run_, evt_, nVtx_, lumi_;

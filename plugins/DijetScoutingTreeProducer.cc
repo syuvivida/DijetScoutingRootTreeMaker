@@ -12,8 +12,23 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     srcVrtx_(consumes<ScoutingVertexCollection>(
                  cfg.getParameter<InputTag>("vtx"))),
     srcRho_(consumes<double>(cfg.getParameter<InputTag>("rho"))),
-    srcMET_(consumes<double>(cfg.getParameter<InputTag>("met")))
+    srcMET_(consumes<double>(cfg.getParameter<InputTag>("met"))),
+    triggerCache_(triggerExpression::Data(
+                      cfg.getParameterSet("triggerConfiguration"),
+                      consumesCollector())),
+    vtriggerAlias_(cfg.getParameter<vector<string>>("triggerAlias")),
+    vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection"))
 {
+    if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
+        cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
+             << endl;
+        return;
+    }
+    for (unsigned i=0; i<vtriggerSelection_.size(); ++i) {
+        vtriggerSelector_.push_back(triggerExpression::parse(
+                                        vtriggerSelection_[i]));
+    }
+
     if (doJECs_) {
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4_DATA");
@@ -39,6 +54,15 @@ DijetScoutingTreeProducer::~DijetScoutingTreeProducer()
 
 void DijetScoutingTreeProducer::beginJob()
 {
+    //--- book the trigger histograms ---------
+    triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
+    triggerNamesHisto_->SetBit(TH1::kCanRebin);
+    for(unsigned i=0; i<vtriggerSelection_.size(); ++i) {
+        triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(), 1);
+    }
+    triggerPassHisto_ = fs_->make<TH1F>("TriggerPass", "TriggerPass", 1, 0, 1);
+    triggerPassHisto_->SetBit(TH1::kCanRebin);
+
     //--- book the tree -----------------------
     outTree_ = fs_->make<TTree>("events","events");
     outTree_->Branch("runNo",  &run_,    "run_/I");
@@ -55,32 +79,32 @@ void DijetScoutingTreeProducer::beginJob()
     outTree_->Branch("dEtajjAK4", &dEtajjAK4_, "dEtajjAK4_/F");
     outTree_->Branch("dPhijjAK4", &dPhijjAK4_, "dPhijjAK4_/F");
 
-    ptAK4_        = new std::vector<float>;
-    jecAK4_       = new std::vector<float>;
-    etaAK4_       = new std::vector<float>;
-    phiAK4_       = new std::vector<float>;
-    massAK4_      = new std::vector<float>;
-    energyAK4_    = new std::vector<float>;
-    areaAK4_      = new std::vector<float>;
-    chfAK4_       = new std::vector<float>;
-    nhfAK4_       = new std::vector<float>;
-    phfAK4_       = new std::vector<float>;
-    mufAK4_       = new std::vector<float>;
-    elfAK4_       = new std::vector<float>;
-    nemfAK4_      = new std::vector<float>;
-    cemfAK4_      = new std::vector<float>;
+    ptAK4_        = new vector<float>;
+    jecAK4_       = new vector<float>;
+    etaAK4_       = new vector<float>;
+    phiAK4_       = new vector<float>;
+    massAK4_      = new vector<float>;
+    energyAK4_    = new vector<float>;
+    areaAK4_      = new vector<float>;
+    chfAK4_       = new vector<float>;
+    nhfAK4_       = new vector<float>;
+    phfAK4_       = new vector<float>;
+    mufAK4_       = new vector<float>;
+    elfAK4_       = new vector<float>;
+    nemfAK4_      = new vector<float>;
+    cemfAK4_      = new vector<float>;
     // Hadronic forward hadrons
-    hf_hfAK4_     = new std::vector<float>;
+    hf_hfAK4_     = new vector<float>;
     // Hadronic forward electromagnetic fraction
-    hf_emfAK4_    = new std::vector<float>;
-    hofAK4_       = new std::vector<float>;
-    idLAK4_       = new std::vector<int>;
-    idTAK4_       = new std::vector<int>;
-    chHadMultAK4_ = new std::vector<int>;
-    chMultAK4_    = new std::vector<int>;
-    neHadMultAK4_ = new std::vector<int>;
-    neMultAK4_    = new std::vector<int>;
-    phoMultAK4_   = new std::vector<int>;
+    hf_emfAK4_    = new vector<float>;
+    hofAK4_       = new vector<float>;
+    idLAK4_       = new vector<int>;
+    idTAK4_       = new vector<int>;
+    chHadMultAK4_ = new vector<int>;
+    chMultAK4_    = new vector<int>;
+    neHadMultAK4_ = new vector<int>;
+    neMultAK4_    = new vector<int>;
+    phoMultAK4_   = new vector<int>;
 
     outTree_->Branch("jetPtAK4",     "vector<float>", &ptAK4_);
     outTree_->Branch("jetJecAK4",    "vector<float>", &jecAK4_);
@@ -106,11 +130,45 @@ void DijetScoutingTreeProducer::beginJob()
     outTree_->Branch("neHadMultAK4", "vector<int>",   &neHadMultAK4_);
     outTree_->Branch("neMultAK4",    "vector<int>",   &neMultAK4_);
     outTree_->Branch("phoMultAK4",   "vector<int>",   &phoMultAK4_);
+
+    //------------------------------------------------------------------
+    triggerResult_ = new vector<bool>;
+    outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
 }
 
 
 void DijetScoutingTreeProducer::endJob()
 {
+    delete triggerResult_;
+
+    delete ptAK4_;
+    delete jecAK4_;
+    delete etaAK4_;
+    delete phiAK4_;
+    delete massAK4_;
+    delete energyAK4_;
+    delete areaAK4_;
+    delete chfAK4_;
+    delete nhfAK4_;
+    delete phfAK4_;
+    delete mufAK4_;
+    delete elfAK4_;
+    delete nemfAK4_;
+    delete cemfAK4_;
+    delete hf_hfAK4_;
+    delete hf_emfAK4_;
+    delete hofAK4_;
+    delete idLAK4_;
+    delete idTAK4_;
+    delete chHadMultAK4_;
+    delete chMultAK4_;
+    delete neHadMultAK4_;
+    delete neMultAK4_;
+    delete phoMultAK4_;
+
+    for(unsigned i=0; i<vtriggerSelector_.size(); ++i) {
+        delete vtriggerSelector_[i];
+    }
 }
 
 
@@ -163,12 +221,30 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     double sumEt = 0.0;
 
+    //-------------- Trigger Info -----------------------------------
+    triggerPassHisto_->Fill("totalEvents", 1);
+    if (triggerCache_.setEvent(iEvent, iSetup)) {
+        for(unsigned itrig=0; itrig<vtriggerSelector_.size(); ++itrig) {
+            bool result = false;
+            if (vtriggerSelector_[itrig]) {
+                if (triggerCache_.configurationUpdated()) {
+                    vtriggerSelector_[itrig]->init(triggerCache_);
+                }
+                result = (*(vtriggerSelector_[itrig]))(triggerCache_);
+            }
+            if (result) {
+                triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
+            }
+            triggerResult_->push_back(result);
+        }
+    }
+
     //-------------- Jets -----------------------------------------
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
     if(doJECs_) {
         // Sort AK4 jets by increasing pT
-        std::multimap<double, unsigned> sortedAK4Jets;
+        multimap<double, unsigned> sortedAK4Jets;
         for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
             ijet!=jetsAK4->end(); ++ijet) {
             double correction = 1.0;
@@ -179,11 +255,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             correction = JetCorrectorAK4_DATA->getCorrection();
 
             jecFactorsAK4.push_back(correction);
-            sortedAK4Jets.insert(std::make_pair(ijet->pt()*correction,
-                                                ijet - jetsAK4->begin()));
+            sortedAK4Jets.insert(make_pair(ijet->pt()*correction,
+                                           ijet - jetsAK4->begin()));
         }
         // Get jet indices in decreasing pT order
-        for (std::multimap<double, unsigned>::const_reverse_iterator it=sortedAK4Jets.rbegin();
+        for (multimap<double, unsigned>::const_reverse_iterator it=sortedAK4Jets.rbegin();
              it!=sortedAK4Jets.rend(); ++it)
             sortedAK4JetIdx.push_back(it->second);
     } else {
@@ -329,6 +405,8 @@ void DijetScoutingTreeProducer::initialize()
     neHadMultAK4_ ->clear();
     neMultAK4_    ->clear();
     phoMultAK4_   ->clear();
+
+    triggerResult_->clear();
 }
 
 
