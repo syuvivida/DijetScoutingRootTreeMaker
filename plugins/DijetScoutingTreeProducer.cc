@@ -312,10 +312,10 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         sumEt += pt;
 
         // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
-        int idL = (nhf < 0.99 && nemf < 0.99 && NumConst > 1)
+        int idL = (nhf < 0.99 && nemf < 0.99 && NumConst > 1 && muf < 0.8)
             && ((fabs(eta) <= 2.4 && chf > 0 && chMult > 0 && cemf < 0.99)
                 || fabs(eta) > 2.4);
-        int idT = (nhf < 0.90 && nemf < 0.90 && NumConst > 1)
+        int idT = (nhf < 0.90 && nemf < 0.90 && NumConst > 1 && muf < 0.8)
             && ((fabs(eta) <= 2.4 && chf > 0 && chMult > 0 && cemf < 0.90)
                 || fabs(eta) > 2.4);
 

@@ -15,10 +15,10 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 #--------------------- Report and output ---------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10000))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 THISROOTFILE = "tree.root"
 process.TFileService=cms.Service("TFileService",
@@ -50,7 +50,11 @@ process.out = cms.OutputModule('PoolOutputModule',
 
 process.source = cms.Source(
     "PoolSource",
-    fileNames = cms.untracked.vstring('root://cmsxrootd-site.fnal.gov//store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_E037F887-2678-E511-8C8F-02163E0136BE.root')
+    #fileNames = cms.untracked.vstring('root://cmsxrootd-site.fnal.gov//store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_E037F887-2678-E511-8C8F-02163E0136BE.root')
+    ## ScoutingPFHT
+    fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root')
+    ## ScoutingPFCommissioning
+    #fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/260/627/00000/42D69A83-F181-E511-9C31-02163E014698.root')   
 )
 
 
