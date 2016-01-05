@@ -357,7 +357,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         dPhijjAK4_ = fabs(deltaPhi(phiAK4_->at(0), phiAK4_->at(1)));
     }
 
-    metSig_ = *met/sumEt;
+    if (sumEt > 0.0)
+        metSig_ = *met/sumEt;
 
     //---- Fill Tree ---
     outTree_->Fill();
