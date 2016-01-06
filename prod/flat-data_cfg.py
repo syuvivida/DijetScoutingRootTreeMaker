@@ -65,11 +65,15 @@ process.source = cms.Source(
 process.dijetscouting = cms.EDAnalyzer(
     'DijetScoutingTreeProducer',
     ## JETS/MET ########################################
-    jetsAK4  = cms.InputTag('hltScoutingPFPacker'),
-    ptMinAK4 = cms.double(10),
-    rho      = cms.InputTag('hltScoutingPFPacker:rho'),
-    met      = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
-    vtx      = cms.InputTag('hltScoutingPFPacker'),
+    jetsAK4    = cms.InputTag('hltScoutingPFPacker'),
+    ptMinAK4   = cms.double(10),
+    rho        = cms.InputTag('hltScoutingPFPacker:rho'),
+    met        = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
+    vtx        = cms.InputTag('hltScoutingPFPacker'),
+    candidates = cms.InputTag('hltScoutingPFPacker'),
+    muons      = cms.InputTag('hltScoutingMuonPacker'),
+    electrons  = cms.InputTag('hltScoutingEgammaPacker'),
+    photons    = cms.InputTag('hltScoutingEgammaPacker'),
 
     ## trigger ###################################
     triggerAlias     = cms.vstring(

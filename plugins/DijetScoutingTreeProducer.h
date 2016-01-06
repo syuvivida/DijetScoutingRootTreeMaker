@@ -10,8 +10,11 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Scouting/interface/ScoutingElectron.h"
+#include "DataFormats/Scouting/interface/ScoutingMuon.h"
 #include "DataFormats/Scouting/interface/ScoutingParticle.h"
 #include "DataFormats/Scouting/interface/ScoutingPFJet.h"
+#include "DataFormats/Scouting/interface/ScoutingPhoton.h"
 #include "DataFormats/Scouting/interface/ScoutingVertex.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -71,6 +74,10 @@ private:
     edm::EDGetTokenT<ScoutingPFJetCollection> srcJetsAK4_;
     edm::EDGetTokenT<ScoutingVertexCollection> srcVrtx_;
     edm::EDGetTokenT<double> srcRho_, srcMET_;
+    edm::EDGetTokenT<ScoutingParticleCollection> srcCandidates_;
+    edm::EDGetTokenT<ScoutingMuonCollection> srcMuons_;
+    edm::EDGetTokenT<ScoutingElectronCollection> srcElectrons_;
+    edm::EDGetTokenT<ScoutingPhotonCollection> srcPhotons_;
     edm::InputTag srcJetsAK4Calo_, srcJetsAK4PFCluster_,
         srcJetsAK4PFCalo_, srcJetsAK8_, srcJetsCA8_, srcPU_,
         srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_,
@@ -87,7 +94,7 @@ private:
     //---- global event variables -----
     int   run_, evt_, nVtx_, lumi_;
     int   nJetsAK4_, nJetsAK8_, nJetsCA8_, nGenJetsAK4_, nGenJetsAK8_, nGenJetsCA8_;
-    float rho_, met_, metSig_;
+    float rho_, met_, metSig_, offMet_, offMetSig_, mht_, mhtSig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK8_, mjjAK8_, dEtajjAK8_, dPhijjAK8_;
     float htCA8_, mjjCA8_, dEtajjCA8_, dPhijjCA8_;

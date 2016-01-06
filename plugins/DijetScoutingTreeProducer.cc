@@ -13,6 +13,14 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
                  cfg.getParameter<InputTag>("vtx"))),
     srcRho_(consumes<double>(cfg.getParameter<InputTag>("rho"))),
     srcMET_(consumes<double>(cfg.getParameter<InputTag>("met"))),
+    srcCandidates_(consumes<ScoutingParticleCollection>(
+                       cfg.getParameter<InputTag>("candidates"))),
+    srcMuons_(consumes<ScoutingMuonCollection>(
+                  cfg.getParameter<InputTag>("muons"))),
+    srcElectrons_(consumes<ScoutingElectronCollection>(
+                      cfg.getParameter<InputTag>("electrons"))),
+    srcPhotons_(consumes<ScoutingPhotonCollection>(
+                    cfg.getParameter<InputTag>("photons"))),
     triggerCache_(triggerExpression::Data(
                       cfg.getParameterSet("triggerConfiguration"),
                       consumesCollector())),
@@ -65,13 +73,17 @@ void DijetScoutingTreeProducer::beginJob()
 
     //--- book the tree -----------------------
     outTree_ = fs_->make<TTree>("events","events");
-    outTree_->Branch("runNo",  &run_,    "run_/I");
-    outTree_->Branch("evtNo",  &evt_,    "evt_/I");
-    outTree_->Branch("lumi",   &lumi_,   "lumi_/I");
-    outTree_->Branch("nvtx",   &nVtx_,   "nVtx_/I");
-    outTree_->Branch("rho",    &rho_,    "rho_/F");
-    outTree_->Branch("met",    &met_,    "met_/F");
-    outTree_->Branch("metSig", &metSig_, "metSig_/F");
+    outTree_->Branch("runNo",     &run_,       "run_/I");
+    outTree_->Branch("evtNo",     &evt_,       "evt_/I");
+    outTree_->Branch("lumi",      &lumi_,      "lumi_/I");
+    outTree_->Branch("nvtx",      &nVtx_,      "nVtx_/I");
+    outTree_->Branch("rho",       &rho_,       "rho_/F");
+    outTree_->Branch("met",       &met_,       "met_/F");
+    outTree_->Branch("metSig",    &metSig_,    "metSig_/F");
+    outTree_->Branch("offMet",    &offMet_,    "offMet_/F");
+    outTree_->Branch("offMetSig", &offMetSig_, "offMetSig_/F");
+    outTree_->Branch("mht",       &mht_,       "mht_/F");
+    outTree_->Branch("mhtSig",    &mhtSig_,    "mhtSig_/F");
 
     outTree_->Branch("nJetsAK4",  &nJetsAK4_,  "nJetsAK4_/I");
     outTree_->Branch("htAK4",     &htAK4_,     "htAK4_/F");
@@ -211,6 +223,24 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         return;
     }
 
+    Handle<ScoutingParticleCollection> candidates;
+    iEvent.getByToken(srcCandidates_, candidates);
+    if (!candidates.isValid()) {
+        throw edm::Exception(edm::errors::ProductNotFound)
+            << "Could not find ScoutingParticleCollection." << endl;
+        return;
+    }
+
+    // Muon, electron, and photon collections may not be preset
+    Handle<ScoutingMuonCollection> muons;
+    iEvent.getByToken(srcMuons_, muons);
+
+    Handle<ScoutingElectronCollection> electrons;
+    iEvent.getByToken(srcElectrons_, electrons);
+
+    Handle<ScoutingPhotonCollection> photons;
+    iEvent.getByToken(srcPhotons_, photons);
+
     //-------------- Event Info -----------------------------------
     rho_  = *rho;
     met_  = *met;
@@ -220,6 +250,52 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     lumi_ = iEvent.id().luminosityBlock();
 
     double sumEt = 0.0;
+    TLorentzVector offline_met(0.0, 0.0, 0.0, 0.0);
+    double sumHt = 0.0;
+    TLorentzVector mht(0.0, 0.0, 0.0, 0.0);
+    for (auto &candidate: *candidates) {
+        sumEt += candidate.pt();
+        sumHt += candidate.pt();
+        TLorentzVector vector;
+        vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
+                            candidate.m());
+        offline_met -= vector;
+        mht -= vector;
+    }
+    if (muons.isValid()) {
+        for (auto &muon: *muons) {
+            sumEt += muon.pt();
+            TLorentzVector vector;
+            vector.SetPtEtaPhiM(muon.pt(), muon.eta(), muon.phi(), muon.m());
+            offline_met -= vector;
+        }
+    }
+    if (electrons.isValid()) {
+        for (auto &electron: *electrons) {
+            sumEt += electron.pt();
+            TLorentzVector vector;
+            vector.SetPtEtaPhiM(electron.pt(), electron.eta(), electron.phi(),
+                                electron.m());
+            offline_met -= vector;
+        }
+    }
+    if (photons.isValid()) {
+        for (auto &photon: *photons) {
+            sumEt += photon.pt();
+            TLorentzVector vector;
+            vector.SetPtEtaPhiM(photon.pt(), photon.eta(), photon.phi(),
+                                photon.m());
+            offline_met -= vector;
+        }
+    }
+    offMet_ = offline_met.Pt();
+    if (sumEt > 0.0) {
+        metSig_ = *met/sumEt;
+        offMetSig_ = offMet_/sumEt;
+    }
+    mht_ = mht.Pt();
+    if (sumHt > 0.0)
+        mhtSig_ = mht_/sumHt;
 
     //-------------- Trigger Info -----------------------------------
     triggerPassHisto_->Fill("totalEvents", 1);
@@ -309,7 +385,6 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         float eta  = ijet->eta();
         float pt   = ijet->pt()*jecFactorsAK4.at(*i);
-        sumEt += pt;
 
         // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
         int idL = (nhf < 0.99 && nemf < 0.99 && NumConst > 1 && muf < 0.8)
@@ -357,9 +432,6 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         dPhijjAK4_ = fabs(deltaPhi(phiAK4_->at(0), phiAK4_->at(1)));
     }
 
-    if (sumEt > 0.0)
-        metSig_ = *met/sumEt;
-
     //---- Fill Tree ---
     outTree_->Fill();
     //------------------
@@ -375,6 +447,10 @@ void DijetScoutingTreeProducer::initialize()
     rho_          = -999;
     met_          = -999;
     metSig_       = -999;
+    offMet_       = -999;
+    offMetSig_    = -999;
+    mht_          = -999;
+    mhtSig_       = -999;
     nJetsAK4_     = -999;
     htAK4_        = -999;
     mjjAK4_       = -999;
