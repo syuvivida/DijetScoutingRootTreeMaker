@@ -21,6 +21,7 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
                       cfg.getParameter<InputTag>("electrons"))),
     srcPhotons_(consumes<ScoutingPhotonCollection>(
                     cfg.getParameter<InputTag>("photons"))),
+    doRECO_(cfg.getParameter<bool>("doRECO")),
     triggerCache_(triggerExpression::Data(
                       cfg.getParameterSet("triggerConfiguration"),
                       consumesCollector())),
@@ -52,6 +53,11 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         vParAK4_DATA.push_back(*L3ParAK4_DATA);
 
         JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+    }
+
+    if (doRECO_) {
+        srcJetsAK4reco_ = consumes<pat::JetCollection>(
+            cfg.getParameter<InputTag>("jetsAK4reco"));
     }
 }
 
@@ -143,6 +149,66 @@ void DijetScoutingTreeProducer::beginJob()
     outTree_->Branch("neMultAK4",    "vector<int>",   &neMultAK4_);
     outTree_->Branch("phoMultAK4",   "vector<int>",   &phoMultAK4_);
 
+    if (doRECO_) {
+        outTree_->Branch("nJetsAK4reco",  &nJetsAK4reco_,  "nJetsAK4reco_/I");
+        outTree_->Branch("htAK4reco",     &htAK4reco_,     "htAK4reco_/F");
+        outTree_->Branch("mjjAK4reco",    &mjjAK4reco_,    "mjjAK4reco_/F");
+        outTree_->Branch("dEtajjAK4reco", &dEtajjAK4reco_, "dEtajjAK4reco_/F");
+        outTree_->Branch("dPhijjAK4reco", &dPhijjAK4reco_, "dPhijjAK4reco_/F");
+
+        ptAK4reco_        = new vector<float>;
+        jecAK4reco_       = new vector<float>;
+        etaAK4reco_       = new vector<float>;
+        phiAK4reco_       = new vector<float>;
+        massAK4reco_      = new vector<float>;
+        energyAK4reco_    = new vector<float>;
+        areaAK4reco_      = new vector<float>;
+        chfAK4reco_       = new vector<float>;
+        nhfAK4reco_       = new vector<float>;
+        phfAK4reco_       = new vector<float>;
+        mufAK4reco_       = new vector<float>;
+        elfAK4reco_       = new vector<float>;
+        nemfAK4reco_      = new vector<float>;
+        cemfAK4reco_      = new vector<float>;
+        // Hadronic forward hadrons
+        hf_hfAK4reco_     = new vector<float>;
+        // Hadronic forward electromagnetic fraction
+        hf_emfAK4reco_    = new vector<float>;
+        hofAK4reco_       = new vector<float>;
+        idLAK4reco_       = new vector<int>;
+        idTAK4reco_       = new vector<int>;
+        chHadMultAK4reco_ = new vector<int>;
+        chMultAK4reco_    = new vector<int>;
+        neHadMultAK4reco_ = new vector<int>;
+        neMultAK4reco_    = new vector<int>;
+        phoMultAK4reco_   = new vector<int>;
+
+        outTree_->Branch("jetPtAK4reco",     "vector<float>", &ptAK4reco_);
+        outTree_->Branch("jetJecAK4reco",    "vector<float>", &jecAK4reco_);
+        outTree_->Branch("jetEtaAK4reco",    "vector<float>", &etaAK4reco_);
+        outTree_->Branch("jetPhiAK4reco",    "vector<float>", &phiAK4reco_);
+        outTree_->Branch("jetMassAK4reco",   "vector<float>", &massAK4reco_);
+        outTree_->Branch("jetEnergyAK4reco", "vector<float>", &energyAK4reco_);
+        outTree_->Branch("jetAreaAK4reco",   "vector<float>", &areaAK4reco_);
+        outTree_->Branch("jetChfAK4reco",    "vector<float>", &chfAK4reco_);
+        outTree_->Branch("jetNhfAK4reco",    "vector<float>", &nhfAK4reco_);
+        outTree_->Branch("jetPhfAK4reco",    "vector<float>", &phfAK4reco_);
+        outTree_->Branch("jetMufAK4reco",    "vector<float>", &mufAK4reco_);
+        outTree_->Branch("jetElfAK4reco",    "vector<float>", &elfAK4reco_);
+        outTree_->Branch("jetNemfAK4reco",   "vector<float>", &nemfAK4reco_);
+        outTree_->Branch("jetCemfAK4reco",   "vector<float>", &cemfAK4reco_);
+        outTree_->Branch("jetHf_hfAK4reco",  "vector<float>", &hf_hfAK4reco_);
+        outTree_->Branch("jetHf_emfAK4reco", "vector<float>", &hf_emfAK4reco_);
+        outTree_->Branch("jetHofAK4reco",    "vector<float>", &hofAK4reco_);
+        outTree_->Branch("idLAK4reco",       "vector<int>",   &idLAK4reco_);
+        outTree_->Branch("idTAK4reco",       "vector<int>",   &idTAK4reco_);
+        outTree_->Branch("chHadMultAK4reco", "vector<int>",   &chHadMultAK4reco_);
+        outTree_->Branch("chMultAK4reco",    "vector<int>",   &chMultAK4reco_);
+        outTree_->Branch("neHadMultAK4reco", "vector<int>",   &neHadMultAK4reco_);
+        outTree_->Branch("neMultAK4reco",    "vector<int>",   &neMultAK4reco_);
+        outTree_->Branch("phoMultAK4reco",   "vector<int>",   &phoMultAK4reco_);
+    }
+
     //------------------------------------------------------------------
     triggerResult_ = new vector<bool>;
     outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
@@ -177,6 +243,33 @@ void DijetScoutingTreeProducer::endJob()
     delete neHadMultAK4_;
     delete neMultAK4_;
     delete phoMultAK4_;
+
+    if (doRECO_) {
+        delete ptAK4reco_;
+        delete jecAK4reco_;
+        delete etaAK4reco_;
+        delete phiAK4reco_;
+        delete massAK4reco_;
+        delete energyAK4reco_;
+        delete areaAK4reco_;
+        delete chfAK4reco_;
+        delete nhfAK4reco_;
+        delete phfAK4reco_;
+        delete mufAK4reco_;
+        delete elfAK4reco_;
+        delete nemfAK4reco_;
+        delete cemfAK4reco_;
+        delete hf_hfAK4reco_;
+        delete hf_emfAK4reco_;
+        delete hofAK4reco_;
+        delete idLAK4reco_;
+        delete idTAK4reco_;
+        delete chHadMultAK4reco_;
+        delete chMultAK4reco_;
+        delete neHadMultAK4reco_;
+        delete neMultAK4reco_;
+        delete phoMultAK4reco_;
+    }
 
     for(unsigned i=0; i<vtriggerSelector_.size(); ++i) {
         delete vtriggerSelector_[i];
@@ -240,6 +333,16 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     Handle<ScoutingPhotonCollection> photons;
     iEvent.getByToken(srcPhotons_, photons);
+
+    Handle<pat::JetCollection> jetsAK4reco;
+    if (doRECO_) {
+        iEvent.getByToken(srcJetsAK4reco_, jetsAK4reco);
+        if (!jetsAK4reco.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find pat::JetCollection." << endl;
+            return;
+        }
+    }
 
     //-------------- Event Info -----------------------------------
     rho_  = *rho;
@@ -318,7 +421,9 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     //-------------- Jets -----------------------------------------
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
-    if(doJECs_) {
+    vector<double> jecFactorsAK4reco;
+    vector<unsigned> sortedAK4recoJetIdx;
+    if (doJECs_) {
         // Sort AK4 jets by increasing pT
         multimap<double, unsigned> sortedAK4Jets;
         for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
@@ -336,13 +441,43 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
         // Get jet indices in decreasing pT order
         for (multimap<double, unsigned>::const_reverse_iterator it=sortedAK4Jets.rbegin();
-             it!=sortedAK4Jets.rend(); ++it)
+             it!=sortedAK4Jets.rend(); ++it) {
             sortedAK4JetIdx.push_back(it->second);
+        }
+
+        if (doRECO_) {
+            multimap<double, unsigned> sortedAK4recoJets;
+            for(pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
+                ijet!=jetsAK4reco->end(); ++ijet) {
+                double correction = 1.0;
+                JetCorrectorAK4_DATA->setJetEta(ijet->eta());
+                JetCorrectorAK4_DATA->setJetPt(ijet->correctedJet(0).pt());
+                JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
+                JetCorrectorAK4_DATA->setRho(rho_);
+                correction = JetCorrectorAK4_DATA->getCorrection();
+
+                jecFactorsAK4reco.push_back(correction);
+                sortedAK4recoJets.insert(make_pair(ijet->pt()*correction,
+                                                   ijet - jetsAK4reco->begin()));
+            }
+            for (multimap<double, unsigned>::const_reverse_iterator it=sortedAK4recoJets.rbegin();
+                 it!=sortedAK4recoJets.rend(); ++it) {
+                sortedAK4recoJetIdx.push_back(it->second);
+            }
+        }
     } else {
         for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
             ijet!=jetsAK4->end(); ++ijet) {
             jecFactorsAK4.push_back(1.0);
             sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
+        }
+
+        if (doRECO_) {
+            for(pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
+                ijet!=jetsAK4reco->end(); ++ijet) {
+                jecFactorsAK4reco.push_back(1.0/ijet->jecFactor(0));
+                sortedAK4recoJetIdx.push_back(ijet - jetsAK4reco->begin());
+            }
         }
     }
 
@@ -432,6 +567,92 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         dPhijjAK4_ = fabs(deltaPhi(phiAK4_->at(0), phiAK4_->at(1)));
     }
 
+    if (doRECO_) {
+        nJetsAK4reco_ = 0;
+        float htAK4reco = 0.0;
+        vector<TLorentzVector> vP4AK4reco;
+        for (vector<unsigned>::const_iterator i=sortedAK4recoJetIdx.begin();
+             i!=sortedAK4recoJetIdx.end(); ++i) {
+            pat::JetCollection::const_iterator ijet = (jetsAK4reco->begin() + *i);
+            double chf = ijet->chargedHadronEnergyFraction();
+            double nhf = ijet->neutralHadronEnergyFraction();
+            double phf = ijet->photonEnergy()/(ijet->jecFactor(0)*ijet->energy());
+            double elf = ijet->electronEnergy()/(ijet->jecFactor(0)*ijet->energy());
+            double muf = ijet->muonEnergyFraction();
+
+            double hf_hf = ijet->HFHadronEnergyFraction();
+            double hf_emf= ijet->HFEMEnergyFraction();
+            double hof   = ijet->hoEnergyFraction();
+
+            int chm    = ijet->chargedHadronMultiplicity();
+
+            int chMult = ijet->chargedMultiplicity();
+            int neMult = ijet->neutralMultiplicity();
+            int npr    = chMult + neMult;
+
+            int chHadMult = chm;
+            int neHadMult = ijet->neutralHadronMultiplicity();
+            int phoMult = ijet->photonMultiplicity();
+
+            double nemf = ijet->neutralEmEnergyFraction();
+            double cemf = ijet->chargedEmEnergyFraction();
+            int NumConst = npr;
+
+            float eta  = ijet->eta();
+            float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4reco.at(*i);
+
+            int idL = (nhf < 0.99 && nemf < 0.99 && NumConst > 1 && muf < 0.8)
+                && ((fabs(eta) <= 2.4 && chf > 0 && chMult > 0 && cemf < 0.99)
+                    || fabs(eta) > 2.4);
+            int idT = (nhf < 0.90 && nemf < 0.90 && NumConst > 1 && muf < 0.8)
+                && ((fabs(eta) <= 2.4 && chf > 0 && chMult > 0 && cemf < 0.90)
+                    || fabs(eta) > 2.4);
+
+            if (pt > ptMinAK4_) {
+                htAK4reco += pt;
+                ++nJetsAK4reco_;
+
+                vP4AK4reco.emplace_back(ijet->correctedJet(0).px()*jecFactorsAK4reco.at(*i),
+                                        ijet->correctedJet(0).py()*jecFactorsAK4reco.at(*i),
+                                        ijet->correctedJet(0).pz()*jecFactorsAK4reco.at(*i),
+                                        ijet->correctedJet(0).energy()*jecFactorsAK4reco.at(*i));
+                chfAK4reco_      ->push_back(chf);
+                nhfAK4reco_      ->push_back(nhf);
+                phfAK4reco_      ->push_back(phf);
+                elfAK4reco_      ->push_back(elf);
+                mufAK4reco_      ->push_back(muf);
+                nemfAK4reco_     ->push_back(nemf);
+                cemfAK4reco_     ->push_back(cemf);
+                hf_hfAK4reco_    ->push_back(hf_hf);
+                hf_emfAK4reco_   ->push_back(hf_emf);
+                hofAK4reco_      ->push_back(hof);
+                jecAK4reco_      ->push_back(jecFactorsAK4reco.at(*i));
+                ptAK4reco_       ->push_back(pt);
+                phiAK4reco_      ->push_back(ijet->phi());
+                etaAK4reco_      ->push_back(ijet->eta());
+                massAK4reco_     ->push_back(ijet->correctedJet(0).mass()
+                                             *jecFactorsAK4reco.at(*i));
+                energyAK4reco_   ->push_back(ijet->correctedJet(0).energy()
+                                             *jecFactorsAK4reco.at(*i));
+                areaAK4reco_     ->push_back(ijet->jetArea());
+                idLAK4reco_      ->push_back(idL);
+                idTAK4reco_      ->push_back(idT);
+                chHadMultAK4reco_->push_back(chHadMult);
+                chMultAK4reco_   ->push_back(chMult);
+                neHadMultAK4reco_->push_back(neHadMult);
+                neMultAK4reco_   ->push_back(neMult);
+                phoMultAK4reco_  ->push_back(phoMult);
+            }
+        }
+        htAK4reco_ = htAK4reco;
+        if (nJetsAK4reco_ > 1) { // Assuming jets are ordered by pt
+            mjjAK4reco_    = (vP4AK4reco[0] + vP4AK4reco[1]).M();
+            dEtajjAK4reco_ = fabs(etaAK4reco_->at(0) - etaAK4reco_->at(1));
+            dPhijjAK4reco_ = fabs(deltaPhi(phiAK4reco_->at(0),
+                                           phiAK4reco_->at(1)));
+        }
+    }
+
     //---- Fill Tree ---
     outTree_->Fill();
     //------------------
@@ -482,6 +703,39 @@ void DijetScoutingTreeProducer::initialize()
     neHadMultAK4_ ->clear();
     neMultAK4_    ->clear();
     phoMultAK4_   ->clear();
+
+    if (doRECO_) {
+        nJetsAK4reco_    = -999;
+        htAK4reco_       = -999;
+        mjjAK4reco_      = -999;
+        dEtajjAK4reco_   = -999;
+        dPhijjAK4reco_   = -999;
+        ptAK4reco_       ->clear();
+        etaAK4reco_      ->clear();
+        phiAK4reco_      ->clear();
+        massAK4reco_     ->clear();
+        energyAK4reco_   ->clear();
+        areaAK4reco_     ->clear();
+        chfAK4reco_      ->clear();
+        nhfAK4reco_      ->clear();
+        phfAK4reco_      ->clear();
+        elfAK4reco_      ->clear();
+        mufAK4reco_      ->clear();
+        nemfAK4reco_     ->clear();
+        cemfAK4reco_     ->clear();
+        hf_hfAK4reco_    ->clear();
+        hf_emfAK4reco_   ->clear();
+        hofAK4reco_      ->clear();
+        jecAK4reco_      ->clear();
+        jecAK4reco_      ->clear();
+        idLAK4reco_      ->clear();
+        idTAK4reco_      ->clear();
+        chHadMultAK4reco_->clear();
+        chMultAK4reco_   ->clear();
+        neHadMultAK4reco_->clear();
+        neMultAK4reco_   ->clear();
+        phoMultAK4reco_  ->clear();
+    }
 
     triggerResult_->clear();
 }

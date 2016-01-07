@@ -10,6 +10,7 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/Scouting/interface/ScoutingElectron.h"
 #include "DataFormats/Scouting/interface/ScoutingMuon.h"
 #include "DataFormats/Scouting/interface/ScoutingParticle.h"
@@ -78,6 +79,8 @@ private:
     edm::EDGetTokenT<ScoutingMuonCollection> srcMuons_;
     edm::EDGetTokenT<ScoutingElectronCollection> srcElectrons_;
     edm::EDGetTokenT<ScoutingPhotonCollection> srcPhotons_;
+    bool doRECO_;
+    edm::EDGetTokenT<pat::JetCollection> srcJetsAK4reco_;
     edm::InputTag srcJetsAK4Calo_, srcJetsAK4PFCluster_,
         srcJetsAK4PFCalo_, srcJetsAK8_, srcJetsCA8_, srcPU_,
         srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_,
@@ -93,9 +96,10 @@ private:
     //---- output TREE variables ------
     //---- global event variables -----
     int   run_, evt_, nVtx_, lumi_;
-    int   nJetsAK4_, nJetsAK8_, nJetsCA8_, nGenJetsAK4_, nGenJetsAK8_, nGenJetsCA8_;
+    int   nJetsAK4_, nJetsAK4reco_, nJetsAK8_, nJetsCA8_, nGenJetsAK4_, nGenJetsAK8_, nGenJetsCA8_;
     float rho_, met_, metSig_, offMet_, offMetSig_, mht_, mhtSig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
+    float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
     float htAK8_, mjjAK8_, dEtajjAK8_, dPhijjAK8_;
     float htCA8_, mjjCA8_, dEtajjCA8_, dPhijjCA8_;
     std::vector<bool> *triggerResult_;
@@ -133,6 +137,9 @@ private:
     std::vector<float> *ptAK4_, *jecAK4_, *etaAK4_, *phiAK4_, *massAK4_, *energyAK4_, *areaAK4_, *chfAK4_, *nhfAK4_, *phfAK4_, *elfAK4_, *mufAK4_, *nemfAK4_, *cemfAK4_;
     std::vector<int> *idLAK4_, *idTAK4_, *chHadMultAK4_, *chMultAK4_, *neHadMultAK4_, *neMultAK4_, *phoMultAK4_;
     std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
+    std::vector<float> *ptAK4reco_, *jecAK4reco_, *etaAK4reco_, *phiAK4reco_, *massAK4reco_, *energyAK4reco_, *areaAK4reco_, *chfAK4reco_, *nhfAK4reco_, *phfAK4reco_, *elfAK4reco_, *mufAK4reco_, *nemfAK4reco_, *cemfAK4reco_;
+    std::vector<int> *idLAK4reco_, *idTAK4reco_, *chHadMultAK4reco_, *chMultAK4reco_, *neHadMultAK4reco_, *neMultAK4reco_, *phoMultAK4reco_;
+    std::vector<float> *hf_hfAK4reco_, *hf_emfAK4reco_, *hofAK4reco_;
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
     std::vector<float> *ptGenAK4_, *etaGenAK4_, *phiGenAK4_, *massGenAK4_, *energyGenAK4_;
     std::vector<float> *ptAK4matchCaloJet_, *emfAK4matchCaloJet_;
