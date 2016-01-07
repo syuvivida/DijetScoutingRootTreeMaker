@@ -50,6 +50,8 @@ private:
     edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_,
         ResCorrAK4_DATA_, L1corrAK8_DATA_, L2corrAK8_DATA_, L3corrAK8_DATA_,
         ResCorrAK8_DATA_;
+    edm::FileInPath L1corrAK4reco_DATA_, L2corrAK4reco_DATA_, L3corrAK4reco_DATA_,
+        ResCorrAK4reco_DATA_;
     edm::FileInPath L1corrAK4_MC_, L2corrAK4_MC_, L3corrAK4_MC_, L1corrAK8_MC_,
         L2corrAK8_MC_, L3corrAK8_MC_;
     JetCorrectorParameters *L1ParAK4_DATA;
@@ -57,6 +59,11 @@ private:
     JetCorrectorParameters *L3ParAK4_DATA;
     JetCorrectorParameters *L2L3ResAK4_DATA;
     FactorizedJetCorrector *JetCorrectorAK4_DATA;
+    JetCorrectorParameters *L1ParAK4reco_DATA;
+    JetCorrectorParameters *L2ParAK4reco_DATA;
+    JetCorrectorParameters *L3ParAK4reco_DATA;
+    JetCorrectorParameters *L2L3ResAK4reco_DATA;
+    FactorizedJetCorrector *JetCorrectorAK4reco_DATA;
     JetCorrectorParameters *L1ParAK4_MC;
     JetCorrectorParameters *L2ParAK4_MC;
     JetCorrectorParameters *L3ParAK4_MC;

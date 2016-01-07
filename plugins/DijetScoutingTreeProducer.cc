@@ -53,6 +53,26 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         vParAK4_DATA.push_back(*L3ParAK4_DATA);
 
         JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+
+        if (doRECO_) {
+            L1corrAK4reco_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4reco_DATA");
+            L2corrAK4reco_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4reco_DATA");
+            L3corrAK4reco_DATA_ = cfg.getParameter<FileInPath>("L3corrAK4reco_DATA");
+            ResCorrAK4reco_DATA_ = cfg.getParameter<FileInPath>("ResCorrAK4reco_DATA");
+
+            L1ParAK4reco_DATA = new JetCorrectorParameters(L1corrAK4reco_DATA_.fullPath());
+            L2ParAK4reco_DATA = new JetCorrectorParameters(L2corrAK4reco_DATA_.fullPath());
+            L3ParAK4reco_DATA = new JetCorrectorParameters(L3corrAK4reco_DATA_.fullPath());
+            L2L3ResAK4reco_DATA = new JetCorrectorParameters(ResCorrAK4reco_DATA_.fullPath());
+
+            vector<JetCorrectorParameters> vParAK4reco_DATA;
+            vParAK4reco_DATA.push_back(*L1ParAK4reco_DATA);
+            vParAK4reco_DATA.push_back(*L2ParAK4reco_DATA);
+            vParAK4reco_DATA.push_back(*L3ParAK4reco_DATA);
+            vParAK4reco_DATA.push_back(*L2L3ResAK4reco_DATA);
+
+            JetCorrectorAK4reco_DATA = new FactorizedJetCorrector(vParAK4reco_DATA);
+        }
     }
 
     if (doRECO_) {
@@ -450,11 +470,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             for(pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
                 ijet!=jetsAK4reco->end(); ++ijet) {
                 double correction = 1.0;
-                JetCorrectorAK4_DATA->setJetEta(ijet->eta());
-                JetCorrectorAK4_DATA->setJetPt(ijet->correctedJet(0).pt());
-                JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
-                JetCorrectorAK4_DATA->setRho(rho_);
-                correction = JetCorrectorAK4_DATA->getCorrection();
+                JetCorrectorAK4reco_DATA->setJetEta(ijet->eta());
+                JetCorrectorAK4reco_DATA->setJetPt(ijet->correctedJet(0).pt());
+                JetCorrectorAK4reco_DATA->setJetA(ijet->jetArea());
+                JetCorrectorAK4reco_DATA->setRho(rho_);
+                correction = JetCorrectorAK4reco_DATA->getCorrection();
 
                 jecFactorsAK4reco.push_back(correction);
                 sortedAK4recoJets.insert(make_pair(ijet->pt()*correction,
