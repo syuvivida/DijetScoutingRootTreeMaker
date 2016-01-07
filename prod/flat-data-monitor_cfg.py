@@ -73,9 +73,6 @@ process.dijetscouting = cms.EDAnalyzer(
     met        = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
     vtx        = cms.InputTag('hltScoutingPFPacker'),
     candidates = cms.InputTag('hltScoutingPFPacker'),
-    muons      = cms.InputTag('hltScoutingMuonPacker'),
-    electrons  = cms.InputTag('hltScoutingEgammaPacker'),
-    photons    = cms.InputTag('hltScoutingEgammaPacker'),
     # ParkingScoutingMonitor
     doRECO     = cms.bool(True),
     jetsAK4reco = cms.InputTag('slimmedJets'),

@@ -15,12 +15,6 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     srcMET_(consumes<double>(cfg.getParameter<InputTag>("met"))),
     srcCandidates_(consumes<ScoutingParticleCollection>(
                        cfg.getParameter<InputTag>("candidates"))),
-    srcMuons_(consumes<ScoutingMuonCollection>(
-                  cfg.getParameter<InputTag>("muons"))),
-    srcElectrons_(consumes<ScoutingElectronCollection>(
-                      cfg.getParameter<InputTag>("electrons"))),
-    srcPhotons_(consumes<ScoutingPhotonCollection>(
-                    cfg.getParameter<InputTag>("photons"))),
     doRECO_(cfg.getParameter<bool>("doRECO")),
     triggerCache_(triggerExpression::Data(
                       cfg.getParameterSet("triggerConfiguration"),
@@ -108,8 +102,8 @@ void DijetScoutingTreeProducer::beginJob()
     outTree_->Branch("metSig",    &metSig_,    "metSig_/F");
     outTree_->Branch("offMet",    &offMet_,    "offMet_/F");
     outTree_->Branch("offMetSig", &offMetSig_, "offMetSig_/F");
-    outTree_->Branch("mht",       &mht_,       "mht_/F");
-    outTree_->Branch("mhtSig",    &mhtSig_,    "mhtSig_/F");
+    outTree_->Branch("mhtAK4",    &mhtAK4_,    "mhtAK4_/F");
+    outTree_->Branch("mhtAK4Sig", &mhtAK4Sig_, "mhtAK4Sig_/F");
 
     outTree_->Branch("nJetsAK4",  &nJetsAK4_,  "nJetsAK4_/I");
     outTree_->Branch("htAK4",     &htAK4_,     "htAK4_/F");
@@ -344,16 +338,6 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         return;
     }
 
-    // Muon, electron, and photon collections may not be preset
-    Handle<ScoutingMuonCollection> muons;
-    iEvent.getByToken(srcMuons_, muons);
-
-    Handle<ScoutingElectronCollection> electrons;
-    iEvent.getByToken(srcElectrons_, electrons);
-
-    Handle<ScoutingPhotonCollection> photons;
-    iEvent.getByToken(srcPhotons_, photons);
-
     Handle<pat::JetCollection> jetsAK4reco;
     if (doRECO_) {
         iEvent.getByToken(srcJetsAK4reco_, jetsAK4reco);
@@ -374,51 +358,17 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     double sumEt = 0.0;
     TLorentzVector offline_met(0.0, 0.0, 0.0, 0.0);
-    double sumHt = 0.0;
-    TLorentzVector mht(0.0, 0.0, 0.0, 0.0);
     for (auto &candidate: *candidates) {
         sumEt += candidate.pt();
-        sumHt += candidate.pt();
         TLorentzVector vector;
         vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
                             candidate.m());
         offline_met -= vector;
-        mht -= vector;
-    }
-    if (muons.isValid()) {
-        for (auto &muon: *muons) {
-            sumEt += muon.pt();
-            TLorentzVector vector;
-            vector.SetPtEtaPhiM(muon.pt(), muon.eta(), muon.phi(), muon.m());
-            offline_met -= vector;
-        }
-    }
-    if (electrons.isValid()) {
-        for (auto &electron: *electrons) {
-            sumEt += electron.pt();
-            TLorentzVector vector;
-            vector.SetPtEtaPhiM(electron.pt(), electron.eta(), electron.phi(),
-                                electron.m());
-            offline_met -= vector;
-        }
-    }
-    if (photons.isValid()) {
-        for (auto &photon: *photons) {
-            sumEt += photon.pt();
-            TLorentzVector vector;
-            vector.SetPtEtaPhiM(photon.pt(), photon.eta(), photon.phi(),
-                                photon.m());
-            offline_met -= vector;
-        }
     }
     offMet_ = offline_met.Pt();
     if (sumEt > 0.0) {
-        metSig_ = *met/sumEt;
         offMetSig_ = offMet_/sumEt;
     }
-    mht_ = mht.Pt();
-    if (sumHt > 0.0)
-        mhtSig_ = mht_/sumHt;
 
     //-------------- Trigger Info -----------------------------------
     triggerPassHisto_->Fill("totalEvents", 1);
@@ -448,8 +398,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     if (doJECs_) {
         // Sort AK4 jets by increasing pT
         multimap<double, unsigned> sortedAK4Jets;
-        for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
-            ijet!=jetsAK4->end(); ++ijet) {
+        for (ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
+             ijet!=jetsAK4->end(); ++ijet) {
             double correction = 1.0;
             JetCorrectorAK4_DATA->setJetEta(ijet->eta());
             JetCorrectorAK4_DATA->setJetPt(ijet->pt());
@@ -469,8 +419,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         if (doRECO_) {
             multimap<double, unsigned> sortedAK4recoJets;
-            for(pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
-                ijet!=jetsAK4reco->end(); ++ijet) {
+            for (pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
+                 ijet!=jetsAK4reco->end(); ++ijet) {
                 double correction = 1.0;
                 JetCorrectorAK4reco_DATA->setJetEta(ijet->eta());
                 JetCorrectorAK4reco_DATA->setJetPt(ijet->correctedJet(0).pt());
@@ -488,15 +438,15 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             }
         }
     } else {
-        for(ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
-            ijet!=jetsAK4->end(); ++ijet) {
+        for (ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
+             ijet!=jetsAK4->end(); ++ijet) {
             jecFactorsAK4.push_back(1.0);
             sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
         }
 
         if (doRECO_) {
-            for(pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
-                ijet!=jetsAK4reco->end(); ++ijet) {
+            for (pat::JetCollection::const_iterator ijet=jetsAK4reco->begin();
+                 ijet!=jetsAK4reco->end(); ++ijet) {
                 jecFactorsAK4reco.push_back(1.0/ijet->jecFactor(0));
                 sortedAK4recoJetIdx.push_back(ijet - jetsAK4reco->begin());
             }
@@ -505,6 +455,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     nJetsAK4_ = 0;
     float htAK4 = 0.0;
+    TLorentzVector mhtAK4(0.0, 0.0, 0.0, 0.0);
     vector<TLorentzVector> vP4AK4;
     for (vector<unsigned>::const_iterator i=sortedAK4JetIdx.begin();
          i!=sortedAK4JetIdx.end(); ++i) {
@@ -553,6 +504,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         if (pt > ptMinAK4_) {
             htAK4 += pt;
+            mhtAK4 -= jet;
             ++nJetsAK4_;
 
             vP4AK4.push_back(jet);
@@ -675,6 +627,13 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
+    mhtAK4_ = mhtAK4.Pt();
+    if (htAK4 > 0.0) {
+        metSig_ = *met/htAK4;
+        mhtAK4Sig_ = mhtAK4_/htAK4;
+    }
+
+
     //---- Fill Tree ---
     outTree_->Fill();
     //------------------
@@ -692,8 +651,8 @@ void DijetScoutingTreeProducer::initialize()
     metSig_       = -999;
     offMet_       = -999;
     offMetSig_    = -999;
-    mht_          = -999;
-    mhtSig_       = -999;
+    mhtAK4_       = -999;
+    mhtAK4Sig_    = -999;
     nJetsAK4_     = -999;
     htAK4_        = -999;
     mjjAK4_       = -999;

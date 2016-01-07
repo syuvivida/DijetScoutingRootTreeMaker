@@ -83,9 +83,6 @@ private:
     edm::EDGetTokenT<ScoutingVertexCollection> srcVrtx_;
     edm::EDGetTokenT<double> srcRho_, srcMET_;
     edm::EDGetTokenT<ScoutingParticleCollection> srcCandidates_;
-    edm::EDGetTokenT<ScoutingMuonCollection> srcMuons_;
-    edm::EDGetTokenT<ScoutingElectronCollection> srcElectrons_;
-    edm::EDGetTokenT<ScoutingPhotonCollection> srcPhotons_;
     bool doRECO_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4reco_;
     edm::InputTag srcJetsAK4Calo_, srcJetsAK4PFCluster_,
@@ -104,7 +101,7 @@ private:
     //---- global event variables -----
     int   run_, evt_, nVtx_, lumi_;
     int   nJetsAK4_, nJetsAK4reco_, nJetsAK8_, nJetsCA8_, nGenJetsAK4_, nGenJetsAK8_, nGenJetsCA8_;
-    float rho_, met_, metSig_, offMet_, offMetSig_, mht_, mhtSig_;
+    float rho_, met_, metSig_, offMet_, offMetSig_, mhtAK4_, mhtAK4Sig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
     float htAK8_, mjjAK8_, dEtajjAK8_, dPhijjAK8_;
