@@ -85,11 +85,15 @@ void DijetScoutingTreeProducer::beginJob()
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
     triggerNamesHisto_->SetBit(TH1::kCanRebin);
-    for(unsigned i=0; i<vtriggerSelection_.size(); ++i) {
+    for (unsigned i=0; i<vtriggerSelection_.size(); ++i) {
         triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(), 1);
     }
     triggerPassHisto_ = fs_->make<TH1F>("TriggerPass", "TriggerPass", 1, 0, 1);
     triggerPassHisto_->SetBit(TH1::kCanRebin);
+    triggerPassHisto_->Fill("totalEvents", 0.0);
+    for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
+        triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
+    }
 
     //--- book the tree -----------------------
     outTree_ = fs_->make<TTree>("events","events");
@@ -381,11 +385,9 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 }
                 result = (*(vtriggerSelector_[itrig]))(triggerCache_);
             }
-	    //FIXME: should be modified in such a way that each trigger has a constant bin position (as in TriggerNames histo) 
-            //       and the corresponding bin content is filled each time the trigger fires. 
-            // if (result) {
-            //     triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
-            // }
+            if (result) {
+                triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
+            }
             triggerResult_->push_back(result);
         }
     }
