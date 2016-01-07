@@ -74,6 +74,8 @@ process.dijetscouting = cms.EDAnalyzer(
     muons      = cms.InputTag('hltScoutingMuonPacker'),
     electrons  = cms.InputTag('hltScoutingEgammaPacker'),
     photons    = cms.InputTag('hltScoutingEgammaPacker'),
+    # ParkingScoutingMonitor
+    doRECO     = cms.bool(False),
 
     ## trigger ###################################
     triggerAlias     = cms.vstring(
