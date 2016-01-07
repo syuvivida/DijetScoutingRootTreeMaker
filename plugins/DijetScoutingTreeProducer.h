@@ -11,12 +11,15 @@
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/Scouting/interface/ScoutingElectron.h"
 #include "DataFormats/Scouting/interface/ScoutingMuon.h"
 #include "DataFormats/Scouting/interface/ScoutingParticle.h"
 #include "DataFormats/Scouting/interface/ScoutingPFJet.h"
 #include "DataFormats/Scouting/interface/ScoutingPhoton.h"
 #include "DataFormats/Scouting/interface/ScoutingVertex.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -69,6 +72,9 @@ private:
     edm::EDGetTokenT<ScoutingParticleCollection> srcCandidates_;
     bool doRECO_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4reco_;
+    edm::EDGetTokenT<reco::VertexCollection> srcVrtxreco_;
+    edm::EDGetTokenT<double> srcRhoreco_;
+    edm::EDGetTokenT<pat::METCollection> srcMETreco_;
     edm::Service<TFileService> fs_;
     TTree *outTree_;
 
@@ -80,8 +86,10 @@ private:
     //---- output TREE variables ------
     //---- global event variables -----
     int   run_, evt_, nVtx_, lumi_;
+    int nVtxreco_;
     int   nJetsAK4_, nJetsAK4reco_;
     float rho_, met_, metSig_, offMet_, offMetSig_, mhtAK4_, mhtAK4Sig_;
+    float rhoreco_, metreco_, metrecoSig_, mhtAK4reco_, mhtAK4recoSig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
     std::vector<bool> *triggerResult_;

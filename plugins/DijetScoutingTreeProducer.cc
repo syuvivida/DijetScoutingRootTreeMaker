@@ -72,6 +72,11 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     if (doRECO_) {
         srcJetsAK4reco_ = consumes<pat::JetCollection>(
             cfg.getParameter<InputTag>("jetsAK4reco"));
+        srcVrtxreco_ = consumes<reco::VertexCollection>(
+            cfg.getParameter<InputTag>("vtxreco"));
+        srcRhoreco_ = consumes<double>(cfg.getParameter<InputTag>("rhoreco"));
+        srcMETreco_ = consumes<pat::METCollection>(
+            cfg.getParameter<InputTag>("metreco"));
     }
 }
 
@@ -168,6 +173,12 @@ void DijetScoutingTreeProducer::beginJob()
     outTree_->Branch("phoMultAK4",   "vector<int>",   &phoMultAK4_);
 
     if (doRECO_) {
+        outTree_->Branch("nvtxreco",      &nVtxreco_,      "nVtxreco_/I");
+        outTree_->Branch("rhoreco",       &rhoreco_,       "rhoreco_/F");
+        outTree_->Branch("metreco",       &metreco_,       "metreco_/F");
+        outTree_->Branch("metrecoSig",    &metrecoSig_,    "metrecoSig_/F");
+        outTree_->Branch("mhtAK4reco",    &mhtAK4reco_,    "mhtAK4reco_/F");
+        outTree_->Branch("mhtAK4recoSig", &mhtAK4recoSig_, "mhtAK4recoSig_/F");
         outTree_->Branch("nJetsAK4reco",  &nJetsAK4reco_,  "nJetsAK4reco_/I");
         outTree_->Branch("htAK4reco",     &htAK4reco_,     "htAK4reco_/F");
         outTree_->Branch("mjjAK4reco",    &mjjAK4reco_,    "mjjAK4reco_/F");
@@ -352,6 +363,30 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
+    Handle<reco::VertexCollection> verticesreco;
+    iEvent.getByToken(srcVrtxreco_, verticesreco);
+    if (!verticesreco.isValid()) {
+        throw Exception(errors::ProductNotFound)
+            << "Could not find reco::VertexCollection." << endl;
+        return;
+    }
+
+    Handle<double> rhoreco;
+    iEvent.getByToken(srcRhoreco_, rhoreco);
+    if (!rhoreco.isValid()) {
+        throw Exception(errors::ProductNotFound)
+            << "Could not find fixedGridRhoFastjetAll." << endl;
+        return;
+    }
+
+    Handle<pat::METCollection> metreco;
+    iEvent.getByToken(srcMETreco_, metreco);
+    if (!metreco.isValid()) {
+        throw Exception(errors::ProductNotFound)
+            << "Could not find pat::MetCollection." << endl;
+        return;
+    }
+
     //-------------- Event Info -----------------------------------
     rho_  = *rho;
     met_  = *met;
@@ -372,6 +407,15 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     offMet_ = offline_met.Pt();
     if (sumEt > 0.0) {
         offMetSig_ = offMet_/sumEt;
+    }
+
+    if (doRECO_) {
+        rhoreco_ = *rhoreco;
+        metreco_ = (*metreco)[0].et();
+        if ((*metreco)[0].sumEt() > 0.0) {
+            metrecoSig_ = (*metreco)[0].et()/(*metreco)[0].sumEt();
+        }
+        nVtxreco_ = verticesreco->size();
     }
 
     //-------------- Trigger Info -----------------------------------
@@ -543,9 +587,17 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         dPhijjAK4_ = fabs(deltaPhi(phiAK4_->at(0), phiAK4_->at(1)));
     }
 
+    mhtAK4_ = mhtAK4.Pt();
+    if (htAK4 > 0.0) {
+        metSig_ = *met/htAK4;
+        mhtAK4Sig_ = mhtAK4_/htAK4;
+    }
+
+
     if (doRECO_) {
         nJetsAK4reco_ = 0;
         float htAK4reco = 0.0;
+        TLorentzVector mhtAK4reco(0.0, 0.0, 0.0, 0.0);
         vector<TLorentzVector> vP4AK4reco;
         for (vector<unsigned>::const_iterator i=sortedAK4recoJetIdx.begin();
              i!=sortedAK4recoJetIdx.end(); ++i) {
@@ -592,6 +644,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                                         ijet->correctedJet(0).py()*jecFactorsAK4reco.at(*i),
                                         ijet->correctedJet(0).pz()*jecFactorsAK4reco.at(*i),
                                         ijet->correctedJet(0).energy()*jecFactorsAK4reco.at(*i));
+                mhtAK4reco -= vP4AK4reco[nJetsAK4reco_-1];
                 chfAK4reco_      ->push_back(chf);
                 nhfAK4reco_      ->push_back(nhf);
                 phfAK4reco_      ->push_back(phf);
@@ -627,14 +680,13 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             dPhijjAK4reco_ = fabs(deltaPhi(phiAK4reco_->at(0),
                                            phiAK4reco_->at(1)));
         }
-    }
+        mhtAK4reco_ = mhtAK4reco.Pt();
+        if (htAK4reco > 0.0) {
+            metrecoSig_ = metreco_/htAK4reco;
+            mhtAK4recoSig_ = mhtAK4reco_/htAK4reco;
+        }
 
-    mhtAK4_ = mhtAK4.Pt();
-    if (htAK4 > 0.0) {
-        metSig_ = *met/htAK4;
-        mhtAK4Sig_ = mhtAK4_/htAK4;
     }
-
 
     //---- Fill Tree ---
     outTree_->Fill();
@@ -688,6 +740,11 @@ void DijetScoutingTreeProducer::initialize()
     phoMultAK4_   ->clear();
 
     if (doRECO_) {
+        rhoreco_         = -999;
+        metreco_         = -999;
+        metrecoSig_      = -999;
+        mhtAK4reco_      = -999;
+        mhtAK4recoSig_   = -999;
         nJetsAK4reco_    = -999;
         htAK4reco_       = -999;
         mjjAK4reco_      = -999;

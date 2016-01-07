@@ -67,18 +67,21 @@ process.source = cms.Source(
 process.dijetscouting = cms.EDAnalyzer(
     'DijetScoutingTreeProducer',
     ## JETS/MET ########################################
-    jetsAK4    = cms.InputTag('hltScoutingPFPacker'),
-    ptMinAK4   = cms.double(10),
-    rho        = cms.InputTag('hltScoutingPFPacker:rho'),
-    met        = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
-    vtx        = cms.InputTag('hltScoutingPFPacker'),
-    candidates = cms.InputTag('hltScoutingPFPacker'),
+    jetsAK4     = cms.InputTag('hltScoutingPFPacker'),
+    ptMinAK4    = cms.double(10),
+    rho         = cms.InputTag('hltScoutingPFPacker:rho'),
+    met         = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
+    vtx         = cms.InputTag('hltScoutingPFPacker'),
+    candidates  = cms.InputTag('hltScoutingPFPacker'),
     # ParkingScoutingMonitor
-    doRECO     = cms.bool(True),
+    doRECO      = cms.bool(True),
     jetsAK4reco = cms.InputTag('slimmedJets'),
+    rhoreco     = cms.InputTag('fixedGridRhoFastjetAll'),
+    metreco     = cms.InputTag('slimmedMETs'),
+    vtxreco     = cms.InputTag('offlineSlimmedPrimaryVertices'),
 
     ## trigger ###################################
-    triggerAlias     = cms.vstring(
+    triggerAlias = cms.vstring(
         # Scouting
         'CaloJet40_BTagScouting',
         'CaloJet40_CaloScouting_PFScouting',
