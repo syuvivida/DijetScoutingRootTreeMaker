@@ -431,9 +431,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 }
                 result = (*(vtriggerSelector_[itrig]))(triggerCache_);
             }
-            if (result) {
-                triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
-            }
+	    //FIXME: should be modified in such a way that each trigger has a constant bin position (as in TriggerNames histo) 
+            //       and the corresponding bin content is filled each time the trigger fires. 
+            // if (result) {
+            //     triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
+            // }
             triggerResult_->push_back(result);
         }
     }
