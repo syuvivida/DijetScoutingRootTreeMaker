@@ -24,3 +24,5 @@ Edit the configuration file `CMSDIJET/DijetScoutingRootTreeMaker/prod/flat-data_
 cd CMSDIJET/DijetScoutingRootTreeMaker/prod/
 cmsRun flat-data_cfg.py
 ```
+
+Use the configuration file `flat-data-monitor_cfg.py` to run over the ParkingScoutingMonitor datasets.
