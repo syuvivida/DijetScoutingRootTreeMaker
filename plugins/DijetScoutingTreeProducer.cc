@@ -354,6 +354,9 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     }
 
     Handle<pat::JetCollection> jetsAK4reco;
+    Handle<reco::VertexCollection> verticesreco;
+    Handle<double> rhoreco;
+    Handle<pat::METCollection> metreco;
     if (doRECO_) {
         iEvent.getByToken(srcJetsAK4reco_, jetsAK4reco);
         if (!jetsAK4reco.isValid()) {
@@ -361,30 +364,28 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 << "Could not find pat::JetCollection." << endl;
             return;
         }
-    }
 
-    Handle<reco::VertexCollection> verticesreco;
-    iEvent.getByToken(srcVrtxreco_, verticesreco);
-    if (!verticesreco.isValid()) {
-        throw Exception(errors::ProductNotFound)
-            << "Could not find reco::VertexCollection." << endl;
-        return;
-    }
+        iEvent.getByToken(srcVrtxreco_, verticesreco);
+        if (!verticesreco.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find reco::VertexCollection." << endl;
+            return;
+        }
 
-    Handle<double> rhoreco;
-    iEvent.getByToken(srcRhoreco_, rhoreco);
-    if (!rhoreco.isValid()) {
-        throw Exception(errors::ProductNotFound)
-            << "Could not find fixedGridRhoFastjetAll." << endl;
-        return;
-    }
+        iEvent.getByToken(srcRhoreco_, rhoreco);
+        if (!rhoreco.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find fixedGridRhoFastjetAll." << endl;
+            return;
+        }
 
-    Handle<pat::METCollection> metreco;
-    iEvent.getByToken(srcMETreco_, metreco);
-    if (!metreco.isValid()) {
-        throw Exception(errors::ProductNotFound)
-            << "Could not find pat::MetCollection." << endl;
-        return;
+
+        iEvent.getByToken(srcMETreco_, metreco);
+        if (!metreco.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find pat::MetCollection." << endl;
+            return;
+        }
     }
 
     //-------------- Event Info -----------------------------------
