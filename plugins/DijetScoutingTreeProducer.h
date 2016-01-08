@@ -96,15 +96,15 @@ private:
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_, *jecAK4_, *etaAK4_, *phiAK4_, *massAK4_,
-        *energyAK4_, *areaAK4_, *chfAK4_, *nhfAK4_, *phfAK4_, *elfAK4_,
-        *mufAK4_, *nemfAK4_, *cemfAK4_;
+        *energyAK4_, *areaAK4_, *csvAK4_, *chfAK4_, *nhfAK4_, *phfAK4_,
+        *elfAK4_, *mufAK4_, *nemfAK4_, *cemfAK4_;
     std::vector<int> *idLAK4_, *idTAK4_, *chHadMultAK4_, *chMultAK4_,
         *neHadMultAK4_, *neMultAK4_, *phoMultAK4_;
     std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
     std::vector<float> *ptAK4reco_, *jecAK4reco_, *etaAK4reco_, *phiAK4reco_,
-        *massAK4reco_, *energyAK4reco_, *areaAK4reco_, *chfAK4reco_,
-        *nhfAK4reco_, *phfAK4reco_, *elfAK4reco_, *mufAK4reco_, *nemfAK4reco_,
-        *cemfAK4reco_;
+        *massAK4reco_, *energyAK4reco_, *areaAK4reco_, *csvAK4reco_,
+        *chfAK4reco_, *nhfAK4reco_, *phfAK4reco_, *elfAK4reco_, *mufAK4reco_,
+        *nemfAK4reco_, *cemfAK4reco_;
     std::vector<int> *idLAK4reco_, *idTAK4reco_, *chHadMultAK4reco_,
         *chMultAK4reco_, *neHadMultAK4reco_, *neMultAK4reco_, *phoMultAK4reco_;
     std::vector<float> *hf_hfAK4reco_, *hf_emfAK4reco_, *hofAK4reco_;
