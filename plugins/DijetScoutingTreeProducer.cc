@@ -508,9 +508,10 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
          i!=sortedAK4JetIdx.end(); ++i) {
         ScoutingPFJetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
         TLorentzVector jet;
-        jet.SetPtEtaPhiM(ijet->pt(), ijet->eta(), ijet->phi(), ijet->m());
+        jet.SetPtEtaPhiM(ijet->pt()*jecFactorsAK4.at(*i), ijet->eta(),
+                         ijet->phi(), ijet->m()*jecFactorsAK4.at(*i));
 
-        double jet_energy = jet.E();
+        double jet_energy = jet.E()/jecFactorsAK4.at(*i);
         double chf = ijet->chargedHadronEnergy()/jet_energy;
         double nhf = ijet->neutralHadronEnergy()/jet_energy;
         double phf = ijet->photonEnergy()/jet_energy;
