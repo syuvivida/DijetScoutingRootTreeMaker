@@ -20,10 +20,16 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
                       cfg.getParameterSet("triggerConfiguration"),
                       consumesCollector())),
     vtriggerAlias_(cfg.getParameter<vector<string>>("triggerAlias")),
-    vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection"))
+    vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection")),
+    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates"))
 {
     if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
         cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
+             << endl;
+        return;
+    }
+    if (vtriggerDuplicates_.size() != vtriggerSelection_.size()) {
+        cout << "ERROR: The size of trigger duplicates vector does not match the number of trigger names."
              << endl;
         return;
     }
@@ -440,7 +446,12 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             if (result) {
                 triggerPassHisto_->Fill(vtriggerAlias_[itrig].c_str(), 1);
             }
-            triggerResult_->push_back(result);
+            if (!vtriggerDuplicates_[itrig]) {
+                triggerResult_->push_back(result);
+            } else {
+                // If trigger is a duplicate, OR result with previous trigger
+                triggerResult_->back() = triggerResult_->back() || result;
+            }
         }
     }
 

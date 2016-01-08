@@ -84,10 +84,13 @@ process.dijetscouting = cms.EDAnalyzer(
     triggerAlias = cms.vstring(
         # Scouting
         'CaloJet40_BTagScouting',
+        'CaloJet40_BTagScouting',
         'CaloJet40_CaloScouting_PFScouting',
+        'L1HTT_BTagScouting',
         'L1HTT_BTagScouting',
         'L1HTT_CaloScouting_PFScouting',
         'CaloScoutingHT250',
+        'BTagScoutingHT450',
         'BTagScoutingHT450',
         'PFScoutingHT450',
         'ZeroBias_PFScouting',
@@ -128,11 +131,14 @@ process.dijetscouting = cms.EDAnalyzer(
     ),
     triggerSelection = cms.vstring(
         # Scouting
+        'DST_CaloJet40_PFReco_PFBTagCSVReco_PFScouting_v*',
         'DST_CaloJet40_BTagScouting_v*',
         'DST_CaloJet40_CaloScouting_PFScouting_v*',
+        'DST_L1HTT125ORHTT150ORHTT175_PFReco_PFBTagCSVReco_PFScouting_v*',
         'DST_L1HTT_BTagScouting_v*',
         'DST_L1HTT_CaloScouting_PFScouting_v*',
         'DST_HT250_CaloScouting_v*',
+        'DST_HT450_PFReco_PFBTagCSVReco_PFScouting_v*',
         'DST_HT450_BTagScouting_v*',
         'DST_HT450_PFScouting_v*',
         'DST_ZeroBias_PFScouting_v*',
@@ -170,6 +176,56 @@ process.dijetscouting = cms.EDAnalyzer(
         'HLT_PFHT450_SixJet40_PFBTagCSV0p72_v*',
         'HLT_PFHT750_4JetPt50_v*',
         'HLT_QuadPFJet_VBF_v*'
+    ),
+    triggerDuplicates = cms.vint32(
+        ## If >0, trigger result will be ORed with result from the previous
+        ## trigger rather than being push_backed
+        # Scouting
+        0, # CaloJet40_BTagScouting
+        1, # CaloJet40_BTagScouting
+        0, # CaloJet40_CaloScouting_PFScouting
+        0, # L1HTT_BTagScouting
+        1, # L1HTT_BTagScouting
+        0, # L1HTT_CaloScouting_PFScouting
+        0, # CaloScoutingHT250
+        0, # BTagScoutingHT450
+        1, # BTagScoutingHT450
+        0, # PFScoutingHT450
+        0, # ZeroBias_PFScouting
+        0, # ZeroBias_BTagScouting
+        0, # L1DoubleMu_BTagScouting
+        0, # L1DoubleMu_PFScouting
+        0, # DoubleMu3_Mass10_BTagScouting
+        0, # DoubleMu3_Mass10_PFScouting
+        # RECO
+        0, # PFHT800
+        0, # PFHT650
+        0, # PFHT600
+        0, # PFHT475
+        0, # PFHT400
+        0, # PFHT350
+        0, # PFHT300
+        0, # PFHT250
+        0, # PFHT200
+        0, # PFHT650MJJ950
+        0, # PFHT650MJJ900
+        0, # PFJET500
+        0, # PFJET450
+        0, # PFJET200
+        0, # HT2000
+        0, # HT2500
+        0, # Mu45Eta2p1
+        0, # AK8DiPFJet280200TrimMass30Btag
+        0, # AK8PFHT600TriMass50Btag
+        0, # AK8PFHT700TriMass50
+        0, # AK8PFJet360TrimMass50
+        0, # CaloJet500NoJetID
+        0, # DiPFJetAve300HFJEC
+        0, # DiPFJetAve500
+        0, # PFHT400SixJet30Btag
+        0, # PFHT450SixJet40Btag
+        0, # PFHT750FourJetPt50
+        0  # QuadPFJetVBF'
     ),
     triggerConfiguration = cms.PSet(
         hltResults            = cms.InputTag('TriggerResults','','HLT'),

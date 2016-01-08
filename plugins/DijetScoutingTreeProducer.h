@@ -82,6 +82,7 @@ private:
     triggerExpression::Data triggerCache_;
     std::vector<triggerExpression::Evaluator*> vtriggerSelector_;
     std::vector<std::string> vtriggerAlias_, vtriggerSelection_;
+    std::vector<int> vtriggerDuplicates_;
     TH1F *triggerPassHisto_, *triggerNamesHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
