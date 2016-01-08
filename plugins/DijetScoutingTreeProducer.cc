@@ -407,6 +407,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     }
     offMet_ = offline_met.Pt();
     if (sumEt > 0.0) {
+        metSig_ = *met/sumEt;
         offMetSig_ = offMet_/sumEt;
     }
 
@@ -590,11 +591,8 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     }
 
     mhtAK4_ = mhtAK4.Pt();
-    if (htAK4 > 0.0) {
-        metSig_ = *met/htAK4;
+    if (htAK4 > 0.0)
         mhtAK4Sig_ = mhtAK4_/htAK4;
-    }
-
 
     if (doRECO_) {
         nJetsAK4reco_ = 0;
