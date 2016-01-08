@@ -473,7 +473,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 JetCorrectorAK4reco_DATA->setJetEta(ijet->eta());
                 JetCorrectorAK4reco_DATA->setJetPt(ijet->correctedJet(0).pt());
                 JetCorrectorAK4reco_DATA->setJetA(ijet->jetArea());
-                JetCorrectorAK4reco_DATA->setRho(rho_);
+                JetCorrectorAK4reco_DATA->setRho(rhoreco_);
                 correction = JetCorrectorAK4reco_DATA->getCorrection();
 
                 jecFactorsAK4reco.push_back(correction);
