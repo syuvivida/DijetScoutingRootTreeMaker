@@ -525,11 +525,10 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     for (vector<unsigned>::const_iterator i=sortedAK4JetIdx.begin();
          i!=sortedAK4JetIdx.end(); ++i) {
         ScoutingPFJetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
-        TLorentzVector jet;
-        jet.SetPtEtaPhiM(ijet->pt()*jecFactorsAK4.at(*i), ijet->eta(),
-                         ijet->phi(), ijet->m()*jecFactorsAK4.at(*i));
+        double jet_energy = ijet->photonEnergy() + ijet->chargedHadronEnergy()
+                          + ijet->neutralHadronEnergy() + ijet->electronEnergy()
+                          + ijet->muonEnergy();
 
-        double jet_energy = jet.E()/jecFactorsAK4.at(*i);
         double chf = ijet->chargedHadronEnergy()/jet_energy;
         double nhf = ijet->neutralHadronEnergy()/jet_energy;
         double phf = ijet->photonEnergy()/jet_energy;
@@ -570,6 +569,9 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         if (pt > ptMinAK4_) {
             htAK4 += pt;
+            TLorentzVector jet;
+            jet.SetPtEtaPhiM(ijet->pt()*jecFactorsAK4.at(*i), ijet->eta(),
+                             ijet->phi(), ijet->m()*jecFactorsAK4.at(*i));
             mhtAK4 -= jet;
             ++nJetsAK4_;
 
