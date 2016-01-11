@@ -553,7 +553,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
         // Juska's added fractions for identical JetID with recommendations
         double nemf = ijet->photonEnergy()/jet_energy;
-        double cemf = (ijet->electronEnergy() + ijet->muonEnergy())/jet_energy;
+        double cemf = ijet->electronEnergy()/jet_energy;
         int NumConst = npr;
 
         float eta  = ijet->eta();
