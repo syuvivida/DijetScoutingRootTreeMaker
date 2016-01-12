@@ -58,7 +58,7 @@ ins = open(args.inputList,"r")
 #globaltags = []
 
 current_time = datetime.datetime.now()
-namedir = tagname+"_%04d%02d%02d_%02d%02d" % (current_time.year,current_time.month,current_time.day,current_time.hour,current_time.minute)
+namedir = tagname+"_%04d%02d%02d_%02d%02d%02d" % (current_time.year,current_time.month,current_time.day,current_time.hour,current_time.minute,current_time.second)
 os.system("mkdir -p "+storagedir)
 os.system("mkdir "+storagedir+"/"+namedir)
 os.system("mkdir "+storagedir+"/"+namedir+"/cfg")
@@ -94,6 +94,7 @@ for line in ins:
         "THISROOTFILE":"\""+sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root"+"\"",
         "THISGLOBALTAG":"\""+globaltag+"\"",
         "LUMISPERJOB":lumisperjob,
+        "OUTPUTFOLDER":namedir,
         "WORKINGAREA":storagedir+"/"+namedir+"/workdir",
         "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3],
         "CMSSWCFG":storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py",
