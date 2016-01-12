@@ -108,6 +108,7 @@ void DijetScoutingTreeProducer::beginJob()
 
     //--- book the tree -----------------------
     outTree_ = fs_->make<TTree>("events","events");
+    outTree_->Branch("isData",    &isData_,    "isData_/I");
     outTree_->Branch("runNo",     &run_,       "run_/I");
     outTree_->Branch("evtNo",     &evt_,       "evt_/I");
     outTree_->Branch("lumi",      &lumi_,      "lumi_/I");
@@ -404,6 +405,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     rho_  = *rho;
     met_  = *met;
     nVtx_ = vertices->size();
+    isData_ = int(iEvent.isRealData());
     run_  = iEvent.id().run();
     evt_  = iEvent.id().event();
     lumi_ = iEvent.id().luminosityBlock();
@@ -718,6 +720,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
 void DijetScoutingTreeProducer::initialize()
 {
+    isData_       = -999;
     run_          = -999;
     evt_          = -999;
     lumi_         = -999;

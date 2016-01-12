@@ -86,7 +86,7 @@ private:
     TH1F *triggerPassHisto_, *triggerNamesHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
-    int   run_, evt_, nVtx_, lumi_;
+    int   isData_, run_, evt_, nVtx_, lumi_;
     int nVtxreco_;
     int   nJetsAK4_, nJetsAK4reco_;
     float rho_, met_, metSig_, offMet_, offMetSig_, mhtAK4_, mhtAK4Sig_;

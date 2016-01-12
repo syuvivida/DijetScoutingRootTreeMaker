@@ -15,10 +15,10 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 #--------------------- Report and output ---------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10000))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 THISROOTFILE = "tree.root"
 process.TFileService=cms.Service("TFileService",
@@ -54,9 +54,11 @@ process.source = cms.Source(
         #'file:/eos/uscms/store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_4C8EBDCE-5877-E511-957C-02163E014600.root'
         #'file:/eos/uscms/store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_3CB17709-3868-E511-B794-02163E011A08.root'
         ## ScoutingPFHT
-        'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root'
+        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/258/742/00000/9EDBF901-6070-E511-B8BD-02163E01466B.root' #old config (257933<=run<259636)
+        'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root' #new config (run>=259636)
         ## ScoutingPFCommissioning
-        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/260/627/00000/42D69A83-F181-E511-9C31-02163E014698.root'
+        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/258/742/00000/46EA74B9-6270-E511-B9E2-02163E014534.root' #old config (257933<=run<259636)
+        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/260/627/00000/42D69A83-F181-E511-9C31-02163E014698.root' #new config (run>=259636)
     )
 )
 
@@ -80,26 +82,26 @@ process.dijetscouting = cms.EDAnalyzer(
     ## trigger ###################################
     triggerAlias = cms.vstring(
         # Scouting
-        'CaloJet40_BTagScouting',
-        'CaloJet40_BTagScouting',
-        'CaloJet40_CaloScouting_PFScouting',
+        'CaloJet40_BTagScouting', #0
+        'CaloJet40_BTagScouting', 
+        'CaloJet40_CaloScouting_PFScouting', #1
+        'L1HTT_BTagScouting', #2
         'L1HTT_BTagScouting',
-        'L1HTT_BTagScouting',
-        'L1HTT_CaloScouting_PFScouting',
-        'CaloScoutingHT250',
+        'L1HTT_CaloScouting_PFScouting', #3
+        'CaloScoutingHT250', #4
+        'BTagScoutingHT450', #5
         'BTagScoutingHT450',
-        'BTagScoutingHT450',
-        'PFScoutingHT450',
-        'ZeroBias_PFScouting',
-        'ZeroBias_BTagScouting',
-        'L1DoubleMu_BTagScouting',
-        'L1DoubleMu_PFScouting',
-        'DoubleMu3_Mass10_BTagScouting',
-        'DoubleMu3_Mass10_PFScouting',
-        # RECO
-        'PFHT800',
-        'PFHT650',
-        'PFHT600',
+        'PFScoutingHT450', #6
+        'ZeroBias_PFScouting', #7
+        'ZeroBias_BTagScouting', #8
+        'L1DoubleMu_BTagScouting', #9
+        'L1DoubleMu_PFScouting', #10
+        'DoubleMu3_Mass10_BTagScouting', #11
+        'DoubleMu3_Mass10_PFScouting', #12
+        # RECO 
+        'PFHT800', #13
+        'PFHT650', #14
+        'PFHT600', #...
         'PFHT475',
         'PFHT400',
         'PFHT350',
