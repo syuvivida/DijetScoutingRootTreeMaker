@@ -71,6 +71,9 @@ for line in ins:
     lumisperjob = line.split()[2]
     globaltag = line.split()[3]
     globaltag = globaltag.strip()
+    secondarydataset = ""
+    if len(line.split()) > 4:
+        secondarydataset = line.split()[4]
 
     #datasets.append(dataset)
     #list_processedevents.append(processedevents)
@@ -85,6 +88,8 @@ for line in ins:
     print "processedevents : "+processedevents
     print "lumisperjob : "+lumisperjob
     print "globaltag : "+globaltag
+    if secondarydataset != "":
+        print "secondarydataset: "+secondarydataset
 
     sample = dataset.split("/")[1]
     print sample
@@ -101,6 +106,8 @@ for line in ins:
         "OUTFILENAME":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
         "INPUTDATASET":dataset
       }
+    if secondarydataset != "":
+        dict["SECONDARYDATASET"] = secondarydataset
     ##create cmssw configuration file
     cmssw_cfgfile = storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py"
     with open(cmssw_cfgfile, "wt") as fout:

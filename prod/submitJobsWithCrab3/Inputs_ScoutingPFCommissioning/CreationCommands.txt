@@ -1,0 +1,5 @@
+#-----------------------------------------------------------
+#  Commissioning scouting dataset
+#-----------------------------------------------------------
+
+python createAndSubmitCrab.py -d Output_ScoutingPFCommissioning -v ScoutingPFCommisioning_Run2015D-v1_Jan-12-2016 -i Inputs_ScoutingPFCommissioning/InputList_Run2015D_ScoutingPFCommissioning.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit

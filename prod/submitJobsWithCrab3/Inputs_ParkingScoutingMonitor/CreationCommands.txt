@@ -1,0 +1,5 @@
+#-----------------------------------------------------------
+#  Monitoring scouting dataset
+#-----------------------------------------------------------
+
+python createAndSubmitCrab.py -d Output_ParkingScoutingMonitor -v ParkingScoutingMonitor_Run2015D_Jan-12-2016 -i Inputs_ParkingScoutingMonitor/InputList_Run2015D_ParkingScoutingMonitor.txt -t crab3_template_data_monitor.py -c ../flat-data-monitor_cfg.py --submit

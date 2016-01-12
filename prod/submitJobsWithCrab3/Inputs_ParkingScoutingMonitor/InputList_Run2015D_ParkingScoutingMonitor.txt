@@ -1,0 +1,1 @@
+/ParkingScoutingMonitor/Run2015D-PromptReco-v4/MINIAOD -1 40 74X_dataRun2_HLT_v1 /ParkingScoutingMonitor/Run2015D-v1/RAW
