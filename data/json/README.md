@@ -11,7 +11,7 @@ lumiSummary_crab_ScoutingPFHT__Run2015D-v1__RAW.json
 
 1901.167 /pb
 
-79426711 events
+78227163 events
 
 
 ParkingScoutingMonitor
@@ -39,7 +39,7 @@ lumiSummary_crab_ParkingScoutingMonitor__Run2015D-PromptReco-v4__MINIAOD.json
 
 1730.038 /pb
 
-8429367 events
+8185013 events
 
 
 ScoutingPFCommissioning
@@ -55,4 +55,4 @@ lumiSummary_crab_ScoutingPFCommissioning__Run2015D-v1__RAW.json
 
 1899.905 /pb
 
-20813081
+19400055 events
