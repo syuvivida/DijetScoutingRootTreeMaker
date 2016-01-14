@@ -4,9 +4,9 @@ ScoutingPFHT
 1)
 
 /ScoutingPFHT/Run2015D-v1/RAW
----
+lumiSummary_crab_ScoutingPFHT__Run2015D-v1__RAW.json
 (CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/ScoutingPFHT_Run2015D-v1_Jan-12-2016_20160112_130407/
----
+1901.167 /pb
 79426711 events
 
 
@@ -36,7 +36,7 @@ ScoutingPFCommissioning
 1)
 
 /ScoutingPFCommissioning/Run2015D-v1/RAW
----
+lumiSummary_crab_ScoutingPFCommissioning__Run2015D-v1__RAW.json
 (CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/ScoutingPFCommisioning_Run2015D-v1_Jan-12-2016_20160112_150858/
----
+1899.905 /pb
 20813081
