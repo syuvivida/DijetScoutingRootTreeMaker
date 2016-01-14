@@ -52,6 +52,7 @@ ScoutingPFCommissioning
 lumiSummary_crab_ScoutingPFCommissioning__Run2015D-v1__RAW.json
 
 (CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/ScoutingPFCommisioning_Run2015D-v1_Jan-12-2016_20160112_150858/
+(ROME T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/Dijet13TeVScouting/rootTrees_big/ScoutingPFCommisioning_Run2015D-v1_Jan-12-2016_20160112_150858/
 
 1899.905 /pb
 
