@@ -55,11 +55,16 @@ private:
     bool doJECs_;
     edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_,
         ResCorrAK4_DATA_;
+    edm::FileInPath L1corrAK4_MC_, L2corrAK4_MC_, L3corrAK4_MC_;
     JetCorrectorParameters *L1ParAK4_DATA;
     JetCorrectorParameters *L2ParAK4_DATA;
     JetCorrectorParameters *L3ParAK4_DATA;
     JetCorrectorParameters *L2L3ResAK4_DATA;
+    JetCorrectorParameters *L1ParAK4_MC;
+    JetCorrectorParameters *L2ParAK4_MC;
+    JetCorrectorParameters *L3ParAK4_MC;
     FactorizedJetCorrector *JetCorrectorAK4_DATA;
+    FactorizedJetCorrector *JetCorrectorAK4_MC;
     //---- configurable parameters --------
     double ptMinAK4_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4_;

@@ -50,19 +50,30 @@ DijetMiniAODTreeProducer::DijetMiniAODTreeProducer(const ParameterSet& cfg):
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4reco_DATA");
         L3corrAK4_DATA_ = cfg.getParameter<FileInPath>("L3corrAK4reco_DATA");
         ResCorrAK4_DATA_ = cfg.getParameter<FileInPath>("ResCorrAK4reco_DATA");
+        L1corrAK4_MC_ = cfg.getParameter<FileInPath>("L1corrAK4reco_MC");
+        L2corrAK4_MC_ = cfg.getParameter<FileInPath>("L2corrAK4reco_MC");
+        L3corrAK4_MC_ = cfg.getParameter<FileInPath>("L3corrAK4reco_MC");
 
         L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
         L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
         L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
         L2L3ResAK4_DATA = new JetCorrectorParameters(ResCorrAK4_DATA_.fullPath());
+        L1ParAK4_MC = new JetCorrectorParameters(L1corrAK4_MC_.fullPath());
+        L2ParAK4_MC = new JetCorrectorParameters(L2corrAK4_MC_.fullPath());
+        L3ParAK4_MC = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
 
         vector<JetCorrectorParameters> vParAK4_DATA;
         vParAK4_DATA.push_back(*L1ParAK4_DATA);
         vParAK4_DATA.push_back(*L2ParAK4_DATA);
         vParAK4_DATA.push_back(*L3ParAK4_DATA);
         vParAK4_DATA.push_back(*L2L3ResAK4_DATA);
+        vector<JetCorrectorParameters> vParAK4_MC;
+        vParAK4_MC.push_back(*L1ParAK4_MC);
+        vParAK4_MC.push_back(*L2ParAK4_MC);
+        vParAK4_MC.push_back(*L3ParAK4_MC);
 
         JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+        JetCorrectorAK4_MC = new FactorizedJetCorrector(vParAK4_MC);
     }
 }
 
@@ -447,14 +458,22 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
         for (pat::JetCollection::const_iterator ijet=jetsAK4->begin();
              ijet!=jetsAK4->end(); ++ijet) {
             double correction = 1.0;
-            JetCorrectorAK4_DATA->setJetEta(ijet->eta());
-            JetCorrectorAK4_DATA->setJetPt(ijet->pt());
-            JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
-            JetCorrectorAK4_DATA->setRho(rho_);
-            correction = JetCorrectorAK4_DATA->getCorrection();
+            if (iEvent.isRealData()) {
+                JetCorrectorAK4_DATA->setJetEta(ijet->eta());
+                JetCorrectorAK4_DATA->setJetPt(ijet->correctedJet(0).pt());
+                JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
+                JetCorrectorAK4_DATA->setRho(rho_);
+                correction = JetCorrectorAK4_DATA->getCorrection();
+            } else {
+                JetCorrectorAK4_MC->setJetEta(ijet->eta());
+                JetCorrectorAK4_MC->setJetPt(ijet->correctedJet(0).pt());
+                JetCorrectorAK4_MC->setJetA(ijet->jetArea());
+                JetCorrectorAK4_MC->setRho(rho_);
+                correction = JetCorrectorAK4_MC->getCorrection();
+            }
 
             jecFactorsAK4.push_back(correction);
-            sortedAK4Jets.insert(make_pair(ijet->pt()*correction,
+            sortedAK4Jets.insert(make_pair(ijet->correctedJet(0).pt()*correction,
                                            ijet - jetsAK4->begin()));
         }
         // Get jet indices in decreasing pT order
@@ -479,8 +498,10 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
         pat::JetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
         double chf = ijet->chargedHadronEnergyFraction();
         double nhf = ijet->neutralHadronEnergyFraction();
-        double phf = ijet->photonEnergy()/(ijet->jecFactor(0)*ijet->energy());
-        double elf = ijet->electronEnergy()/(ijet->jecFactor(0)*ijet->energy());
+        double phf = ijet->photonEnergy()/(ijet->jecFactor(0)
+                                           * ijet->correctedJet(0).energy());
+        double elf = ijet->electronEnergy()/(ijet->jecFactor(0)
+                                             * ijet->correctedJet(0).energy());
         double muf = ijet->muonEnergyFraction();
 
         double hf_hf = ijet->HFHadronEnergyFraction();
@@ -537,9 +558,9 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
             phiAK4_           ->push_back(ijet->phi());
             etaAK4_           ->push_back(ijet->eta());
             massAK4_          ->push_back(ijet->correctedJet(0).mass()
-                                          *jecFactorsAK4.at(*i));
+                                          * jecFactorsAK4.at(*i));
             energyAK4_        ->push_back(ijet->correctedJet(0).energy()
-                                          *jecFactorsAK4.at(*i));
+                                          * jecFactorsAK4.at(*i));
             areaAK4_          ->push_back(ijet->jetArea());
             csvAK4_           ->push_back(ijet->bDiscriminator(
                                "pfCombinedInclusiveSecondaryVertexV2BJetTags"));
