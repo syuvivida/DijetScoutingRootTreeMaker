@@ -5,7 +5,7 @@ using namespace edm;
 
 
 DijetMiniAODTreeProducer::DijetMiniAODTreeProducer(const ParameterSet& cfg):
-    doJECs_(cfg.getParameter<bool>("doJECs")),
+    redoJECs_(cfg.getParameter<bool>("redoJECs")),
     ptMinAK4_(cfg.getParameter<double>("ptMinAK4")),
     srcJetsAK4_(consumes<pat::JetCollection>(
                     cfg.getParameter<InputTag>("jetsAK4"))),
@@ -45,7 +45,7 @@ DijetMiniAODTreeProducer::DijetMiniAODTreeProducer(const ParameterSet& cfg):
                                         vtriggerSelection_[i]));
     }
 
-    if (doJECs_) {
+    if (redoJECs_) {
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4reco_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4reco_DATA");
         L3corrAK4_DATA_ = cfg.getParameter<FileInPath>("L3corrAK4reco_DATA");
@@ -452,7 +452,7 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
     vector<unsigned> sortedAK4JetIdx;
     vector<double> jecFactorsAK4reco;
     vector<unsigned> sortedAK4recoJetIdx;
-    if (doJECs_) {
+    if (redoJECs_) {
         // Sort AK4 jets by increasing pT
         multimap<double, unsigned> sortedAK4Jets;
         for (pat::JetCollection::const_iterator ijet=jetsAK4->begin();
@@ -484,7 +484,7 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
     } else {
         for (pat::JetCollection::const_iterator ijet=jetsAK4->begin();
              ijet!=jetsAK4->end(); ++ijet) {
-            jecFactorsAK4.push_back(1.0);
+            jecFactorsAK4.push_back(1.0/ijet->jecFactor(0));
             sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
         }
     }

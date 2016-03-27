@@ -52,7 +52,7 @@ private:
 
     void initialize();
     // For JECs
-    bool doJECs_;
+    bool redoJECs_;
     edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_,
         ResCorrAK4_DATA_;
     edm::FileInPath L1corrAK4_MC_, L2corrAK4_MC_, L3corrAK4_MC_;

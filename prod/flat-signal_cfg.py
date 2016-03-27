@@ -238,7 +238,7 @@ process.dijetscouting = cms.EDAnalyzer(
     ),
 
     ## JECs ################
-    doJECs = cms.bool(True),
+    redoJECs = cms.bool(True),
 
     L1corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV7_DATA/Summer15_25nsV7_DATA_L1FastJet_AK4PFchs.txt'),
     L2corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV7_DATA/Summer15_25nsV7_DATA_L2Relative_AK4PFchs.txt'),
