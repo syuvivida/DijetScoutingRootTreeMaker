@@ -498,10 +498,8 @@ void DijetMiniAODTreeProducer::analyze(const Event& iEvent,
         pat::JetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
         double chf = ijet->chargedHadronEnergyFraction();
         double nhf = ijet->neutralHadronEnergyFraction();
-        double phf = ijet->photonEnergy()/(ijet->jecFactor(0)
-                                           * ijet->correctedJet(0).energy());
-        double elf = ijet->electronEnergy()/(ijet->jecFactor(0)
-                                             * ijet->correctedJet(0).energy());
+        double phf = ijet->photonEnergy()/(ijet->jecFactor(0)*ijet->energy());
+        double elf = ijet->electronEnergy()/(ijet->jecFactor(0)*ijet->energy());
         double muf = ijet->muonEnergyFraction();
 
         double hf_hf = ijet->HFHadronEnergyFraction();

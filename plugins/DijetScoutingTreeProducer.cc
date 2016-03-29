@@ -496,7 +496,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 correction = JetCorrectorAK4reco_DATA->getCorrection();
 
                 jecFactorsAK4reco.push_back(correction);
-                sortedAK4recoJets.insert(make_pair(ijet->pt()*correction,
+                sortedAK4recoJets.insert(make_pair(ijet->correctedJet(0).pt()*correction,
                                                    ijet - jetsAK4reco->begin()));
             }
             for (multimap<double, unsigned>::const_reverse_iterator it=sortedAK4recoJets.rbegin();
