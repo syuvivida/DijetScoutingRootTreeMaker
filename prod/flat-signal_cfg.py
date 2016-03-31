@@ -1,21 +1,35 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
 
-process = cms.Process('jetToolbox')
+process = cms.Process('DijetScoutingRootTreeMaker')
 
 process.load('PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
+options = VarParsing.VarParsing('analysis')
+options.outputFile = 'dijetscouting_bigtree.root'
+options.inputFiles = ''
+options.maxEvents = -1
+options.register('reportEvery',
+                 1000, # default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to process before reporting progress.")
+options.parseArguments()
+
 #--------------------- Report and output ---------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(
+    input = cms.untracked.int32(options.maxEvents)
+)
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
 
 process.TFileService=cms.Service("TFileService",
-                                 fileName=cms.string(THISROOTFILE),
+                                 fileName=cms.string(options.outputFile),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -56,8 +70,7 @@ process.prunedGenParticlesDijet = cms.EDProducer('GenParticlePruner',
 
 process.source = cms.Source(
     "PoolSource",
-    fileNames = cms.untracked.vstring(
-    )
+    fileNames = cms.untracked.vstring(options.inputFiles)
 )
 
 
