@@ -1,3 +1,7 @@
+==================
+====== DATA ======
+==================
+
 ScoutingPFHT
 ============
 
@@ -60,3 +64,50 @@ lumiSummary_crab_ScoutingPFCommissioning__Run2015D-v1__RAW.json
 1922.867 /pb
 
 19400055 events
+
+==================
+======= MC =======
+==================
+
+QCD
+=======================
+Spring15                                      xsec
+========================================================
+QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8      19204300 pb
+QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8     2762530 pb
+QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8    471100 pb
+QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8    117276 pb
+QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8    7823 pb
+QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8    648.2 pb
+QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8    186.9 pb
+QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8   32.293 pb
+QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8  9.4183 pb
+QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8  0.84265 pb
+QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8  0.114943 pb
+QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8  0.0068298 pb
+QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8   0.000165445 pb
+
+Spring15 25ns MC samples
+========================
+
+/QCD_Pt_*_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+JEC Summer15_25nsV7
+(CERN EOS)
+/eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/MC/background/Spring15_25ns_JEC_Summer15_25nsV7/
+
+
+Signal
+=======================
+
+Spring15 25ns MC samples
+========================
+
+/RSGravitonToGluonGluon_kMpl01_M_*_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+/RSGravitonToGluonGluon_kMpl01_M_750_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-Asympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+/RSGravitonToQuarkQuark_kMpl01_M_*_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+/RSGravitonToQuarkQuark_kMpl01_M_750_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-Asympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+/QstarToJJ_M_*_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+/QstarToJJ_M_750_TuneCUETP8M1_13TeV_pythia8/RunIISpring15MiniAODv2-Asympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM
+JEC Summer15_25nsV7
+(CERN EOS)
+/eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/MC/signal/Spring15_25ns_JEC_Summer15_25nsV7/
