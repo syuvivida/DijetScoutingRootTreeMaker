@@ -1,0 +1,5 @@
+#-----------------------------------------------------------
+#  Main scouting dataset
+#-----------------------------------------------------------
+
+python createAndSubmitCrab.py -d Output_ScoutingCaloHT -v ScoutingCaloHT_Run2015D-v1_Jan-12-2016 -i Inputs_ScoutingCaloHT/InputList_Run2015D_ScoutingCaloHT.txt -t crab3_template_data.py -c ../flat-data-calo_cfg.py --submit
