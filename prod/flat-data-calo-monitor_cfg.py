@@ -21,8 +21,8 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 fileName=cms.string('monitor.root'),
-                                 #fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string('monitor.root'),
+                                 fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
