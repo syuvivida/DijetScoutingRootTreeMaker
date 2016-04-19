@@ -15,14 +15,13 @@ process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 #fileName=cms.string('monitor.root'),
-                                 fileName=cms.string(THISROOTFILE),
+                                 fileName=cms.string('dijetNtuple.root'),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
