@@ -8,8 +8,9 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- Global Tag ------------------
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-#process.GlobalTag.globaltag = THISGLOBALTAG
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -38,6 +39,14 @@ process.source = cms.Source(
     fileNames = cms.untracked.vstring(
         '/store/data/Run2015D/ScoutingCaloHT/RAW/v1/000/260/627/00000/46A705F8-0582-E511-A5BE-02163E014593.root',
     )
+)
+
+#unpack trigger results from RAW
+process.gtDigis = cms.EDProducer( "L1GlobalTriggerRawToDigi",
+    DaqGtFedId = cms.untracked.int32( 813 ),
+    DaqGtInputTag = cms.InputTag( "hltFEDSelectorL1" ),
+    UnpackBxInEvent = cms.int32( -1 ),
+    ActiveBoardsMask = cms.uint32( 0xffff )
 )
 
 
@@ -182,7 +191,12 @@ process.dijetscouting = cms.EDAnalyzer(
 
     L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L1FastJet_AK4PFHLT.txt'),
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L2Relative_AK4PFHLT.txt'),
-    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt')
+    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt'),
+
+    #L1 trigger info
+    doL1 = cms.bool(True),
+    l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175"),
+    l1InputTag = cms.InputTag("gtDigis","","jetToolbox")
 )
 
 

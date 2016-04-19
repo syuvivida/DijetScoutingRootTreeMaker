@@ -4,6 +4,7 @@
 // System include files
 #include <iostream>
 #include <vector>
+#include <string>
 
 // CMSSW include files
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -26,6 +27,7 @@
 #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
+#include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
 
 // Root include files
 #include "TLorentzVector.h"
@@ -89,6 +91,12 @@ private:
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
     std::vector<bool> *triggerResult_;
+    //---- L1 ----
+    bool doL1_;
+    L1GtUtils *l1GtUtils_;
+    std::vector<std::string> l1Seeds_;
+    edm::InputTag l1InputTag_;
+    std::vector<bool> *l1Result_;
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_, *jecAK4_, *etaAK4_, *phiAK4_, *massAK4_,

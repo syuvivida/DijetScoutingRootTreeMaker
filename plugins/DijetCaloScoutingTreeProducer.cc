@@ -19,7 +19,8 @@ DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet&
                       consumesCollector())),
     vtriggerAlias_(cfg.getParameter<vector<string>>("triggerAlias")),
     vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection")),
-    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates"))
+    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates")),
+    doL1_(cfg.getParameter<bool>("doL1"))
 {
     if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
         cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
@@ -81,6 +82,17 @@ DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet&
         srcRhoreco_ = consumes<double>(cfg.getParameter<InputTag>("rhoreco"));
         srcMETreco_ = consumes<pat::METCollection>(
             cfg.getParameter<InputTag>("metreco"));
+    }
+
+    if (doL1_) {
+        l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
+        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
+        l1GtUtils_ = new L1GtUtils();
+    }
+    else {
+        l1Seeds_ = std::vector<std::string>();
+        l1InputTag_ = edm::InputTag();
+        l1GtUtils_ = 0;
     }
 }
 
@@ -249,7 +261,9 @@ void DijetCaloScoutingTreeProducer::beginJob()
 
     //------------------------------------------------------------------
     triggerResult_ = new vector<bool>;
+    l1Result_ = new vector<bool>;
     outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
+    outTree_->Branch("l1Result", "vector<bool>", &l1Result_);
 }
 
 
@@ -446,6 +460,27 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
+    //-------------- L1 Info -----------------------------------
+    if (doL1_) {
+        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
+        int iErrorCode = -1;
+        for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
+            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
+                                                            l1Seeds_[iseed], iErrorCode);
+            l1Result_->push_back( l1htbit );
+            if (iErrorCode % 10 == 1) {
+                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
+                l1Result_->push_back( false ); 
+            } 
+            else if (iErrorCode > 0) {
+                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
+                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
+                l1Result_->push_back( false );
+            }
+        }
+    }
+
+
     //-------------- Jets -----------------------------------------
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
@@ -522,7 +557,7 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
                           + ijet->hadEnergyInHE() + ijet->hadEnergyInHF();
 
         double chf = 0.0;
-        //IMPORTANT: these variables are proxies for the jet hadronic/EM energy fractions
+        //NOTE: these variables are proxies for the jet hadronic/EM energy fractions
         double nhf = (ijet->hadEnergyInHB()+ijet->hadEnergyInHE()+ijet->hadEnergyInHF())/jet_energy;
         double phf = (ijet->emEnergyInEB()+ijet->emEnergyInEE()+ijet->emEnergyInHF())/jet_energy;
         double elf = -1;
@@ -785,6 +820,7 @@ void DijetCaloScoutingTreeProducer::initialize()
     }
 
     triggerResult_->clear();
+    l1Result_->clear();
 }
 
 

@@ -8,9 +8,9 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- Global Tag ------------------
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-
-#process.GlobalTag.globaltag = THISGLOBALTAG
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -45,6 +45,14 @@ process.source = cms.Source(
         '/store/data/Run2015D/ParkingScoutingMonitor/RAW/v1/000/258/174/00000/F0EAFCF6-076A-E511-85D6-02163E013530.root'
         #'root://cmsxrootd-site.fnal.gov//store/data/Run2015D/ParkingScoutingMonitor/RAW/v1/000/258/174/00000/F0EAFCF6-076A-E511-85D6-02163E013530.root'
     )
+)
+
+#unpack trigger results from RAW
+process.gtDigis = cms.EDProducer( "L1GlobalTriggerRawToDigi",
+    DaqGtFedId = cms.untracked.int32( 813 ),
+    DaqGtInputTag = cms.InputTag( "hltFEDSelectorL1" ),
+    UnpackBxInEvent = cms.int32( -1 ),
+    ActiveBoardsMask = cms.uint32( 0xffff )
 )
 
 
@@ -198,9 +206,13 @@ process.dijetscouting = cms.EDAnalyzer(
     L1corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK4PFchs.txt'),
     L2corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
     L3corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
-    ResCorrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt')
-)
+    ResCorrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
 
+    #L1 trigger info
+    doL1 = cms.bool(True),
+    l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175"),
+    l1InputTag = cms.InputTag("gtDigis","","RECO")
+)
 
 # ------------------ path --------------------------
 
