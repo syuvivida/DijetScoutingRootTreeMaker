@@ -125,9 +125,6 @@ void DijetCaloScoutingTreeProducer::beginJob()
     outTree_->Branch("nvtx",      &nVtx_,      "nVtx_/I");
     outTree_->Branch("rho",       &rho_,       "rho_/F");
     outTree_->Branch("met",       &met_,       "met_/F");
-    outTree_->Branch("metSig",    &metSig_,    "metSig_/F");
-    outTree_->Branch("offMet",    &offMet_,    "offMet_/F");
-    outTree_->Branch("offMetSig", &offMetSig_, "offMetSig_/F");
     outTree_->Branch("mhtAK4",    &mhtAK4_,    "mhtAK4_/F");
     outTree_->Branch("mhtAK4Sig", &mhtAK4Sig_, "mhtAK4Sig_/F");
 
@@ -145,25 +142,13 @@ void DijetCaloScoutingTreeProducer::beginJob()
     energyAK4_    = new vector<float>;
     areaAK4_      = new vector<float>;
     csvAK4_       = new vector<float>;
-    chfAK4_       = new vector<float>;
-    nhfAK4_       = new vector<float>;
-    phfAK4_       = new vector<float>;
-    mufAK4_       = new vector<float>;
-    elfAK4_       = new vector<float>;
-    nemfAK4_      = new vector<float>;
-    cemfAK4_      = new vector<float>;
+    hadfAK4_      = new vector<float>;
+    emfAK4_       = new vector<float>;
     // Hadronic forward hadrons
     hf_hfAK4_     = new vector<float>;
     // Hadronic forward electromagnetic fraction
     hf_emfAK4_    = new vector<float>;
-    hofAK4_       = new vector<float>;
-    idLAK4_       = new vector<int>;
-    idTAK4_       = new vector<int>;
-    chHadMultAK4_ = new vector<int>;
-    chMultAK4_    = new vector<int>;
-    neHadMultAK4_ = new vector<int>;
-    neMultAK4_    = new vector<int>;
-    phoMultAK4_   = new vector<int>;
+    idAK4_        = new vector<int>;
 
     outTree_->Branch("jetPtAK4",     "vector<float>", &ptAK4_);
     outTree_->Branch("jetJecAK4",    "vector<float>", &jecAK4_);
@@ -173,23 +158,11 @@ void DijetCaloScoutingTreeProducer::beginJob()
     outTree_->Branch("jetEnergyAK4", "vector<float>", &energyAK4_);
     outTree_->Branch("jetAreaAK4",   "vector<float>", &areaAK4_);
     outTree_->Branch("jetCSVAK4",    "vector<float>", &csvAK4_);
-    outTree_->Branch("jetChfAK4",    "vector<float>", &chfAK4_);
-    outTree_->Branch("jetNhfAK4",    "vector<float>", &nhfAK4_);
-    outTree_->Branch("jetPhfAK4",    "vector<float>", &phfAK4_);
-    outTree_->Branch("jetMufAK4",    "vector<float>", &mufAK4_);
-    outTree_->Branch("jetElfAK4",    "vector<float>", &elfAK4_);
-    outTree_->Branch("jetNemfAK4",   "vector<float>", &nemfAK4_);
-    outTree_->Branch("jetCemfAK4",   "vector<float>", &cemfAK4_);
+    outTree_->Branch("jetHadfAK4",   "vector<float>", &hadfAK4_);
+    outTree_->Branch("jetEmfAK4",    "vector<float>", &emfAK4_);
     outTree_->Branch("jetHf_hfAK4",  "vector<float>", &hf_hfAK4_);
     outTree_->Branch("jetHf_emfAK4", "vector<float>", &hf_emfAK4_);
-    outTree_->Branch("jetHofAK4",    "vector<float>", &hofAK4_);
-    outTree_->Branch("idLAK4",       "vector<int>",   &idLAK4_);
-    outTree_->Branch("idTAK4",       "vector<int>",   &idTAK4_);
-    outTree_->Branch("chHadMultAK4", "vector<int>",   &chHadMultAK4_);
-    outTree_->Branch("chMultAK4",    "vector<int>",   &chMultAK4_);
-    outTree_->Branch("neHadMultAK4", "vector<int>",   &neHadMultAK4_);
-    outTree_->Branch("neMultAK4",    "vector<int>",   &neMultAK4_);
-    outTree_->Branch("phoMultAK4",   "vector<int>",   &phoMultAK4_);
+    outTree_->Branch("idAK4",        "vector<int>",   &idAK4_);
 
     if (doRECO_) {
         outTree_->Branch("nvtxreco",      &nVtxreco_,      "nVtxreco_/I");
@@ -279,23 +252,11 @@ void DijetCaloScoutingTreeProducer::endJob()
     delete energyAK4_;
     delete areaAK4_;
     delete csvAK4_;
-    delete chfAK4_;
-    delete nhfAK4_;
-    delete phfAK4_;
-    delete mufAK4_;
-    delete elfAK4_;
-    delete nemfAK4_;
-    delete cemfAK4_;
+    delete hadfAK4_;
+    delete emfAK4_;
     delete hf_hfAK4_;
     delete hf_emfAK4_;
-    delete hofAK4_;
-    delete idLAK4_;
-    delete idTAK4_;
-    delete chHadMultAK4_;
-    delete chMultAK4_;
-    delete neHadMultAK4_;
-    delete neMultAK4_;
-    delete phoMultAK4_;
+    delete idAK4_;
 
     if (doRECO_) {
         delete ptAK4reco_;
@@ -418,15 +379,6 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
     run_  = iEvent.id().run();
     evt_  = iEvent.id().event();
     lumi_ = iEvent.id().luminosityBlock();
-
-    //SumET and `Offline MET' not computed (no PF candidate collection available in calo scouting)
-    double sumEt = 0.0;
-    TLorentzVector offline_met(0.0, 0.0, 0.0, 0.0);
-    offMet_ = offline_met.Pt();
-    if (sumEt > 0.0) {
-        metSig_ = *met/sumEt;
-        offMetSig_ = offMet_/sumEt;
-    }
 
     if (doRECO_) {
         rhoreco_ = *rhoreco;
@@ -551,38 +503,19 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
     for (vector<unsigned>::const_iterator i=sortedAK4JetIdx.begin();
          i!=sortedAK4JetIdx.end(); ++i) {
         ScoutingCaloJetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
-        //NOTE: some variables are unused in the calo jet case
         double jet_energy = ijet->emEnergyInEB() + ijet->emEnergyInEE()
                           + ijet->emEnergyInHF() + ijet->hadEnergyInHB()
                           + ijet->hadEnergyInHE() + ijet->hadEnergyInHF();
 
-        double chf = 0.0;
-        //NOTE: these variables are proxies for the jet hadronic/EM energy fractions
-        double nhf = (ijet->hadEnergyInHB()+ijet->hadEnergyInHE()+ijet->hadEnergyInHF())/jet_energy;
-        double phf = (ijet->emEnergyInEB()+ijet->emEnergyInEE()+ijet->emEnergyInHF())/jet_energy;
-        double elf = -1;
-        double muf = -1;
-
+        double hadf = (ijet->hadEnergyInHB()+ijet->hadEnergyInHE()+ijet->hadEnergyInHF())/jet_energy;
+        double emf = (ijet->emEnergyInEB()+ijet->emEnergyInEE()+ijet->emEnergyInHF())/jet_energy;
         double hf_hf = ijet->hadEnergyInHF()/jet_energy;
         double hf_emf= ijet->emEnergyInHF()/jet_energy;
-        double hof   = -1;
-
-        int chMult = 0;
-        int neMult = 0;
-
-        int chHadMult = 0;
-        int neHadMult = 0;
-        int phoMult = 0;
-
-        // Juska's added fractions for identical JetID with recommendations
-        double nemf = 0.0;
-        double cemf = 0.0;
 
         float pt   = ijet->pt()*jecFactorsAK4.at(*i);
 
-        // TODO: add jet ID for calojets
-        int idL = 1;
-        int idT = 1;
+        //Basic ID for calo jets
+        int id = hadf < 0.95 && emf < 0.95;
 
         if (pt > ptMinAK4_) {
             htAK4 += pt;
@@ -593,16 +526,10 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
             ++nJetsAK4_;
 
             vP4AK4.push_back(jet);
-            chfAK4_           ->push_back(chf);
-            nhfAK4_           ->push_back(nhf);
-            phfAK4_           ->push_back(phf);
-            elfAK4_           ->push_back(elf);
-            mufAK4_           ->push_back(muf);
-            nemfAK4_          ->push_back(nemf);
-            cemfAK4_          ->push_back(cemf);
+            hadfAK4_          ->push_back(hadf);
+            emfAK4_           ->push_back(emf);
             hf_hfAK4_         ->push_back(hf_hf);
             hf_emfAK4_        ->push_back(hf_emf);
-            hofAK4_           ->push_back(hof);
             jecAK4_           ->push_back(jecFactorsAK4.at(*i));
             ptAK4_            ->push_back(pt);
             phiAK4_           ->push_back(ijet->phi());
@@ -611,13 +538,7 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
             energyAK4_        ->push_back(jet_energy*jecFactorsAK4.at(*i));
             areaAK4_          ->push_back(ijet->jetArea());
             csvAK4_           ->push_back(-1);
-            idLAK4_           ->push_back(idL);
-            idTAK4_           ->push_back(idT);
-            chHadMultAK4_     ->push_back(chHadMult);
-            chMultAK4_        ->push_back(chMult);
-            neHadMultAK4_     ->push_back(neHadMult);
-            neMultAK4_        ->push_back(neMult);
-            phoMultAK4_       ->push_back(phoMult);
+            idAK4_            ->push_back(id);
         }
     }
     htAK4_ = htAK4;
@@ -742,9 +663,6 @@ void DijetCaloScoutingTreeProducer::initialize()
     nVtx_         = -999;
     rho_          = -999;
     met_          = -999;
-    metSig_       = -999;
-    offMet_       = -999;
-    offMetSig_    = -999;
     mhtAK4_       = -999;
     mhtAK4Sig_    = -999;
     nJetsAK4_     = -999;
@@ -759,26 +677,12 @@ void DijetCaloScoutingTreeProducer::initialize()
     energyAK4_    ->clear();
     areaAK4_      ->clear();
     csvAK4_       ->clear();
-    chfAK4_       ->clear();
-    nhfAK4_       ->clear();
-    phfAK4_       ->clear();
-    elfAK4_       ->clear();
-    mufAK4_       ->clear();
-    nemfAK4_      ->clear();
-    cemfAK4_      ->clear();
+    hadfAK4_      ->clear();
+    emfAK4_       ->clear();
     hf_hfAK4_     ->clear();
     hf_emfAK4_    ->clear();
-    hofAK4_       ->clear();
     jecAK4_       ->clear();
-    jecAK4_       ->clear();
-    idLAK4_       ->clear();
-    idTAK4_       ->clear();
-    // Juska's fix
-    chHadMultAK4_ ->clear();
-    chMultAK4_    ->clear();
-    neHadMultAK4_ ->clear();
-    neMultAK4_    ->clear();
-    phoMultAK4_   ->clear();
+    idAK4_        ->clear();
 
     if (doRECO_) {
         rhoreco_         = -999;

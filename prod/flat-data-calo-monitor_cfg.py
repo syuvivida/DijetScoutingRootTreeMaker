@@ -9,8 +9,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
-process.GlobalTag.globaltag = THISGLOBALTAG
+process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
+#process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------

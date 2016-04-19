@@ -86,7 +86,7 @@ private:
     int   isData_, run_, evt_, nVtx_, lumi_;
     int nVtxreco_;
     int   nJetsAK4_, nJetsAK4reco_;
-    float rho_, met_, metSig_, offMet_, offMetSig_, mhtAK4_, mhtAK4Sig_;
+    float rho_, met_, mhtAK4_, mhtAK4Sig_;
     float rhoreco_, metreco_, metrecoSig_, mhtAK4reco_, mhtAK4recoSig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
@@ -100,11 +100,9 @@ private:
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_, *jecAK4_, *etaAK4_, *phiAK4_, *massAK4_,
-        *energyAK4_, *areaAK4_, *csvAK4_, *chfAK4_, *nhfAK4_, *phfAK4_,
-        *elfAK4_, *mufAK4_, *nemfAK4_, *cemfAK4_;
-    std::vector<int> *idLAK4_, *idTAK4_, *chHadMultAK4_, *chMultAK4_,
-        *neHadMultAK4_, *neMultAK4_, *phoMultAK4_;
-    std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
+        *energyAK4_, *areaAK4_, *csvAK4_, *hadfAK4_, *emfAK4_;
+    std::vector<int> *idAK4_;
+    std::vector<float> *hf_hfAK4_, *hf_emfAK4_;
     std::vector<float> *ptAK4reco_, *jecAK4reco_, *etaAK4reco_, *phiAK4reco_,
         *massAK4reco_, *energyAK4reco_, *areaAK4reco_, *csvAK4reco_,
         *chfAK4reco_, *nhfAK4reco_, *phfAK4reco_, *elfAK4reco_, *mufAK4reco_,
