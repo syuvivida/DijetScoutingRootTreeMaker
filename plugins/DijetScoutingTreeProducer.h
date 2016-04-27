@@ -18,6 +18,7 @@
 #include "DataFormats/Scouting/interface/ScoutingPFJet.h"
 #include "DataFormats/Scouting/interface/ScoutingPhoton.h"
 #include "DataFormats/Scouting/interface/ScoutingVertex.h"
+#include "DataFormats/Scouting/interface/ScoutingCaloJet.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -75,6 +76,11 @@ private:
     edm::EDGetTokenT<reco::VertexCollection> srcVrtxreco_;
     edm::EDGetTokenT<double> srcRhoreco_;
     edm::EDGetTokenT<pat::METCollection> srcMETreco_;
+    //For calo scouting
+    bool doCalo_;
+    edm::EDGetTokenT<ScoutingCaloJetCollection> srcJetsAK4calo_;
+    edm::EDGetTokenT<double> srcRhocalo_, srcMETcalo_;
+
     edm::Service<TFileService> fs_;
     TTree *outTree_;
 
@@ -93,6 +99,11 @@ private:
     float rhoreco_, metreco_, metrecoSig_, mhtAK4reco_, mhtAK4recoSig_;
     float htAK4_, mjjAK4_, dEtajjAK4_, dPhijjAK4_;
     float htAK4reco_, mjjAK4reco_, dEtajjAK4reco_, dPhijjAK4reco_;
+    //For calo scouting
+    int nJetsAK4calo_;
+    float rhocalo_, metcalo_, metcaloSig_, mhtAK4calo_, mhtAK4caloSig_;
+    float htAK4calo_, mjjAK4calo_, dEtajjAK4calo_, dPhijjAK4calo_;
+
     std::vector<bool> *triggerResult_;
 
     //---- jet and genJet variables --------------
@@ -109,6 +120,11 @@ private:
     std::vector<int> *idLAK4reco_, *idTAK4reco_, *chHadMultAK4reco_,
         *chMultAK4reco_, *neHadMultAK4reco_, *neMultAK4reco_, *phoMultAK4reco_;
     std::vector<float> *hf_hfAK4reco_, *hf_emfAK4reco_, *hofAK4reco_;
+    //For calo scouting
+    std::vector<float> *ptAK4calo_, *jecAK4calo_, *etaAK4calo_, *phiAK4calo_, *massAK4calo_,
+        *energyAK4calo_, *areaAK4calo_, *csvAK4calo_, *hadfAK4calo_, *emfAK4calo_;
+    std::vector<int> *idAK4calo_;
+    std::vector<float> *hf_hfAK4calo_, *hf_emfAK4calo_;
 };
 
 #endif
