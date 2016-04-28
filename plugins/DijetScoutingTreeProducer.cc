@@ -22,7 +22,8 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
                       consumesCollector())),
     vtriggerAlias_(cfg.getParameter<vector<string>>("triggerAlias")),
     vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection")),
-    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates"))
+    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates")),
+    doL1_(cfg.getParameter<bool>("doL1"))
 {
     if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
         cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
@@ -92,6 +93,17 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         srcRhocalo_ = consumes<double>(cfg.getParameter<InputTag>("rhocalo"));
         srcMETcalo_ = consumes<double>(cfg.getParameter<InputTag>("metcalo"));
     }
+
+    if (doL1_) {
+        l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
+        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
+        l1GtUtils_ = new L1GtUtils();
+    }
+    else {
+        l1Seeds_ = std::vector<std::string>();
+        l1InputTag_ = edm::InputTag();
+        l1GtUtils_ = 0;
+    }
 }
 
 DijetScoutingTreeProducer::~DijetScoutingTreeProducer()
@@ -112,6 +124,17 @@ void DijetScoutingTreeProducer::beginJob()
     triggerPassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
+    }
+    l1NamesHisto_ = fs_->make<TH1F>("L1Names", "L1Names", 1, 0, 1);
+    l1NamesHisto_->SetBit(TH1::kCanRebin);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+        l1NamesHisto_->Fill(l1Seeds_[i].c_str(), 1);
+    }
+    l1PassHisto_ = fs_->make<TH1F>("L1Pass", "L1Pass", 1, 0, 1);
+    l1PassHisto_->SetBit(TH1::kCanRebin);
+    l1PassHisto_->Fill("totalEvents", 0.0);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+        l1PassHisto_->Fill(l1Seeds_[i].c_str(), 0.0);
     }
 
     //--- book the tree -----------------------
@@ -300,13 +323,16 @@ void DijetScoutingTreeProducer::beginJob()
 
     //------------------------------------------------------------------
     triggerResult_ = new vector<bool>;
+    l1Result_ = new vector<bool>;
     outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
+    outTree_->Branch("l1Result", "vector<bool>", &l1Result_);
 }
 
 
 void DijetScoutingTreeProducer::endJob()
 {
     delete triggerResult_;
+    delete l1Result_;
 
     delete ptAK4_;
     delete jecAK4_;
@@ -549,6 +575,31 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             } else {
                 // If trigger is a duplicate, OR result with previous trigger
                 triggerResult_->back() = triggerResult_->back() || result;
+            }
+        }
+    }
+
+    //-------------- L1 Info -----------------------------------
+    l1PassHisto_->Fill("totalEvents", 1);
+    if (doL1_) {
+        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
+        int iErrorCode = -1;
+        for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
+            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
+                                                            l1Seeds_[iseed], iErrorCode);
+            l1Result_->push_back( l1htbit );
+            //Fill histogram
+            if (l1htbit) {
+                l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
+            }
+            if (iErrorCode % 10 == 1) {
+                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
+                l1Result_->push_back( false ); 
+            } 
+            else if (iErrorCode > 0) {
+                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
+                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
+                l1Result_->push_back( false );
             }
         }
     }
@@ -996,6 +1047,7 @@ void DijetScoutingTreeProducer::initialize()
     }
 
     triggerResult_->clear();
+    l1Result_->clear();
 }
 
 
