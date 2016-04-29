@@ -8,9 +8,9 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- Global Tag ------------------
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-
-#process.GlobalTag.globaltag = THISGLOBALTAG
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -21,6 +21,7 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
+                                 #fileName=cms.string("monitor.root"),
                                  fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
@@ -58,6 +59,13 @@ process.source = cms.Source(
     )
 )
 
+#unpack L1 trigger results from RAW
+process.gtDigis = cms.EDProducer( "L1GlobalTriggerRawToDigi",
+    DaqGtFedId = cms.untracked.int32( 813 ),
+    DaqGtInputTag = cms.InputTag( "hltFEDSelectorL1" ),
+    UnpackBxInEvent = cms.int32( -1 ),
+    ActiveBoardsMask = cms.uint32( 0xffff )
+)
 
 
 ##-------------------- User analyzer  --------------------------------
@@ -78,6 +86,11 @@ process.dijetscouting = cms.EDAnalyzer(
     rhoreco     = cms.InputTag('fixedGridRhoFastjetAll'),
     metreco     = cms.InputTag('slimmedMETs'),
     vtxreco     = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    # CaloScouting
+    doCalo      = cms.bool(True),
+    jetsAK4calo = cms.InputTag('hltScoutingCaloPacker'),
+    rhocalo     = cms.InputTag('hltScoutingCaloPacker:rho'),
+    metcalo     = cms.InputTag('hltScoutingCaloPacker:caloMetPt'),
 
     ## trigger ###################################
     triggerAlias = cms.vstring(
@@ -244,7 +257,12 @@ process.dijetscouting = cms.EDAnalyzer(
     L1corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK4PFchs.txt'),
     L2corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
     L3corrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
-    ResCorrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt')
+    ResCorrAK4reco_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
+
+    #L1 trigger info
+    doL1 = cms.bool(True),
+    l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175","L1_ZeroBias","L1_DoubleMu_10_3p5","L1_DoubleMu_12_5"),
+    l1InputTag = cms.InputTag("gtDigis","","RECO")
 )
 
 

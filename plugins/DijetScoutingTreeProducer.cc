@@ -16,12 +16,14 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     srcCandidates_(consumes<ScoutingParticleCollection>(
                        cfg.getParameter<InputTag>("candidates"))),
     doRECO_(cfg.getParameter<bool>("doRECO")),
+    doCalo_(cfg.getParameter<bool>("doCalo")),
     triggerCache_(triggerExpression::Data(
                       cfg.getParameterSet("triggerConfiguration"),
                       consumesCollector())),
     vtriggerAlias_(cfg.getParameter<vector<string>>("triggerAlias")),
     vtriggerSelection_(cfg.getParameter<vector<string>>("triggerSelection")),
-    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates"))
+    vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates")),
+    doL1_(cfg.getParameter<bool>("doL1"))
 {
     if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
         cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
@@ -84,6 +86,24 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         srcMETreco_ = consumes<pat::METCollection>(
             cfg.getParameter<InputTag>("metreco"));
     }
+
+    if (doCalo_) {
+        srcJetsAK4calo_ = consumes<ScoutingCaloJetCollection>(
+            cfg.getParameter<InputTag>("jetsAK4calo"));
+        srcRhocalo_ = consumes<double>(cfg.getParameter<InputTag>("rhocalo"));
+        srcMETcalo_ = consumes<double>(cfg.getParameter<InputTag>("metcalo"));
+    }
+
+    if (doL1_) {
+        l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
+        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
+        l1GtUtils_ = new L1GtUtils();
+    }
+    else {
+        l1Seeds_ = std::vector<std::string>();
+        l1InputTag_ = edm::InputTag();
+        l1GtUtils_ = 0;
+    }
 }
 
 DijetScoutingTreeProducer::~DijetScoutingTreeProducer()
@@ -104,6 +124,17 @@ void DijetScoutingTreeProducer::beginJob()
     triggerPassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
+    }
+    l1NamesHisto_ = fs_->make<TH1F>("L1Names", "L1Names", 1, 0, 1);
+    l1NamesHisto_->SetBit(TH1::kCanRebin);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+        l1NamesHisto_->Fill(l1Seeds_[i].c_str(), 1);
+    }
+    l1PassHisto_ = fs_->make<TH1F>("L1Pass", "L1Pass", 1, 0, 1);
+    l1PassHisto_->SetBit(TH1::kCanRebin);
+    l1PassHisto_->Fill("totalEvents", 0.0);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+        l1PassHisto_->Fill(l1Seeds_[i].c_str(), 0.0);
     }
 
     //--- book the tree -----------------------
@@ -249,15 +280,59 @@ void DijetScoutingTreeProducer::beginJob()
         outTree_->Branch("phoMultAK4reco",   "vector<int>",   &phoMultAK4reco_);
     }
 
+    if (doCalo_) {
+        outTree_->Branch("rhocalo",       &rhocalo_,       "rhocalo_/F");
+        outTree_->Branch("metcalo",       &metcalo_,       "metcalo_/F");
+        outTree_->Branch("mhtAK4calo",    &mhtAK4calo_,    "mhtAK4calo_/F");
+        outTree_->Branch("mhtAK4caloSig", &mhtAK4caloSig_, "mhtAK4caloSig_/F");
+        outTree_->Branch("metcaloSig",    &metcaloSig_,    "metcaloSig_/F");
+        outTree_->Branch("nJetsAK4calo",  &nJetsAK4calo_,  "nJetsAK4calo_/I");
+        outTree_->Branch("htAK4calo",     &htAK4calo_,     "htAK4calo_/F");
+        outTree_->Branch("mjjAK4calo",    &mjjAK4calo_,    "mjjAK4calo_/F");
+        outTree_->Branch("dEtajjAK4calo", &dEtajjAK4calo_, "dEtajjAK4calo_/F");
+        outTree_->Branch("dPhijjAK4calo", &dPhijjAK4calo_, "dPhijjAK4calo_/F");
+
+        ptAK4calo_        = new vector<float>;
+        jecAK4calo_       = new vector<float>;
+        etaAK4calo_       = new vector<float>;
+        phiAK4calo_       = new vector<float>;
+        massAK4calo_      = new vector<float>;
+        energyAK4calo_    = new vector<float>;
+        areaAK4calo_      = new vector<float>;
+        csvAK4calo_       = new vector<float>;
+        hadfAK4calo_       = new vector<float>;
+        emfAK4calo_       = new vector<float>;
+        hf_hfAK4calo_     = new vector<float>;
+        hf_emfAK4calo_    = new vector<float>;
+        idAK4calo_       = new vector<int>;
+
+        outTree_->Branch("jetPtAK4calo",     "vector<float>", &ptAK4calo_);
+        outTree_->Branch("jetJecAK4calo",    "vector<float>", &jecAK4calo_);
+        outTree_->Branch("jetEtaAK4calo",    "vector<float>", &etaAK4calo_);
+        outTree_->Branch("jetPhiAK4calo",    "vector<float>", &phiAK4calo_);
+        outTree_->Branch("jetMassAK4calo",   "vector<float>", &massAK4calo_);
+        outTree_->Branch("jetEnergyAK4calo", "vector<float>", &energyAK4calo_);
+        outTree_->Branch("jetAreaAK4calo",   "vector<float>", &areaAK4calo_);
+        outTree_->Branch("jetCSVAK4calo",    "vector<float>", &csvAK4calo_);
+        outTree_->Branch("jetHadfAK4calo",    "vector<float>", &hadfAK4calo_);
+        outTree_->Branch("jetEmfAK4calo",    "vector<float>", &emfAK4calo_);
+        outTree_->Branch("jetHf_hfAK4calo",  "vector<float>", &hf_hfAK4calo_);
+        outTree_->Branch("jetHf_emfAK4calo", "vector<float>", &hf_emfAK4calo_);
+        outTree_->Branch("idAK4calo",       "vector<int>",   &idAK4calo_);
+    }
+
     //------------------------------------------------------------------
     triggerResult_ = new vector<bool>;
+    l1Result_ = new vector<bool>;
     outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
+    outTree_->Branch("l1Result", "vector<bool>", &l1Result_);
 }
 
 
 void DijetScoutingTreeProducer::endJob()
 {
     delete triggerResult_;
+    delete l1Result_;
 
     delete ptAK4_;
     delete jecAK4_;
@@ -311,6 +386,22 @@ void DijetScoutingTreeProducer::endJob()
         delete neHadMultAK4reco_;
         delete neMultAK4reco_;
         delete phoMultAK4reco_;
+    }
+
+    if (doCalo_) {
+        delete ptAK4calo_;
+        delete jecAK4calo_;
+        delete etaAK4calo_;
+        delete phiAK4calo_;
+        delete massAK4calo_;
+        delete energyAK4calo_;
+        delete areaAK4calo_;
+        delete csvAK4calo_;
+        delete hadfAK4calo_;
+        delete emfAK4calo_;
+        delete hf_hfAK4calo_;
+        delete hf_emfAK4calo_;
+        delete idAK4calo_;
     }
 
     for(unsigned i=0; i<vtriggerSelector_.size(); ++i) {
@@ -401,6 +492,32 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
+    Handle<ScoutingCaloJetCollection> jetsAK4calo;
+    Handle<double> rhocalo;
+    Handle<double> metcalo;
+    if (doCalo_) {
+        iEvent.getByToken(srcJetsAK4calo_, jetsAK4calo);
+        if (!jetsAK4calo.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find ScoutingCaloJetCollection." << endl;
+            return;
+        }
+
+        iEvent.getByToken(srcRhocalo_, rhocalo);
+        if (!rhocalo.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find fixedGridRhoFastjetAllCalo." << endl;
+            return;
+        }
+
+
+        iEvent.getByToken(srcMETcalo_, metcalo);
+        if (!metcalo.isValid()) {
+            throw Exception(errors::ProductNotFound)
+                << "Could not find metcalo." << endl;
+            return;
+        }
+    }
     //-------------- Event Info -----------------------------------
     rho_  = *rho;
     met_  = *met;
@@ -434,6 +551,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         nVtxreco_ = verticesreco->size();
     }
 
+    if (doCalo_) {
+        rhocalo_ = *rhocalo;
+        metcalo_ = *metcalo;
+    }
+
     //-------------- Trigger Info -----------------------------------
     triggerPassHisto_->Fill("totalEvents", 1);
     if (triggerCache_.setEvent(iEvent, iSetup)) {
@@ -457,11 +579,38 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
+    //-------------- L1 Info -----------------------------------
+    l1PassHisto_->Fill("totalEvents", 1);
+    if (doL1_) {
+        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
+        int iErrorCode = -1;
+        for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
+            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
+                                                            l1Seeds_[iseed], iErrorCode);
+            l1Result_->push_back( l1htbit );
+            //Fill histogram
+            if (l1htbit) {
+                l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
+            }
+            if (iErrorCode % 10 == 1) {
+                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
+                l1Result_->push_back( false ); 
+            } 
+            else if (iErrorCode > 0) {
+                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
+                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
+                l1Result_->push_back( false );
+            }
+        }
+    }
+
     //-------------- Jets -----------------------------------------
     vector<double> jecFactorsAK4;
     vector<unsigned> sortedAK4JetIdx;
     vector<double> jecFactorsAK4reco;
     vector<unsigned> sortedAK4recoJetIdx;
+    vector<double> jecFactorsAK4calo;
+    vector<unsigned> sortedAK4caloJetIdx;
     if (doJECs_) {
         // Sort AK4 jets by increasing pT
         multimap<double, unsigned> sortedAK4Jets;
@@ -517,6 +666,14 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                 jecFactorsAK4reco.push_back(1.0/ijet->jecFactor(0));
                 sortedAK4recoJetIdx.push_back(ijet - jetsAK4reco->begin());
             }
+        }
+    }
+    //Do not apply JECs to calojets
+    if (doCalo_) {
+        for (ScoutingCaloJetCollection::const_iterator ijet=jetsAK4calo->begin();
+                ijet!=jetsAK4calo->end(); ++ijet) {
+            jecFactorsAK4calo.push_back(1.0);
+            sortedAK4caloJetIdx.push_back(ijet - jetsAK4calo->begin());
         }
     }
 
@@ -712,6 +869,65 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     }
 
+    if (doCalo_) {
+        nJetsAK4calo_ = 0;
+        float htAK4calo = 0.0;
+        TLorentzVector mhtAK4calo(0.0, 0.0, 0.0, 0.0);
+        vector<TLorentzVector> vP4AK4calo;
+        for (vector<unsigned>::const_iterator i=sortedAK4caloJetIdx.begin();
+             i!=sortedAK4caloJetIdx.end(); ++i) {
+            ScoutingCaloJetCollection::const_iterator ijet = (jetsAK4calo->begin() + *i);
+            double jet_energy = ijet->emEnergyInEB() + ijet->emEnergyInEE()
+                              + ijet->emEnergyInHF() + ijet->hadEnergyInHB()
+                              + ijet->hadEnergyInHE() + ijet->hadEnergyInHF();
+            double hadf = (ijet->hadEnergyInHB()+ijet->hadEnergyInHE()+ijet->hadEnergyInHF())/jet_energy;
+            double emf = (ijet->emEnergyInEB()+ijet->emEnergyInEE()+ijet->emEnergyInHF())/jet_energy;
+            double hf_hf = ijet->hadEnergyInHF()/jet_energy;
+            double hf_emf= ijet->emEnergyInHF()/jet_energy;
+
+            float pt   = ijet->pt();
+
+            //Basic ID for calo jets
+            int id = hadf < 0.95 && emf < 0.95;
+
+            if (pt > ptMinAK4_) {
+                TLorentzVector jet;
+                jet.SetPtEtaPhiM(pt, ijet->eta(), ijet->phi(), ijet->m());
+
+                htAK4calo += pt;
+                mhtAK4calo -= jet;
+                ++nJetsAK4calo_;
+
+                vP4AK4calo.push_back(jet);
+                hadfAK4calo_      ->push_back(hadf);
+                emfAK4calo_      ->push_back(emf);
+                hf_hfAK4calo_    ->push_back(hf_hf);
+                hf_emfAK4calo_   ->push_back(hf_emf);
+                jecAK4calo_      ->push_back(1.0);
+                ptAK4calo_       ->push_back(pt);
+                phiAK4calo_      ->push_back(ijet->phi());
+                etaAK4calo_      ->push_back(ijet->eta());
+                massAK4calo_     ->push_back(ijet->m());
+                energyAK4calo_   ->push_back(jet_energy);
+                areaAK4calo_     ->push_back(ijet->jetArea());
+                csvAK4calo_     ->push_back(-1.0);
+                idAK4calo_      ->push_back(id);
+            }
+        }
+        htAK4calo_ = htAK4calo;
+        if (nJetsAK4calo_ > 1) { // Assuming jets are ordered by pt
+            mjjAK4calo_    = (vP4AK4calo[0] + vP4AK4calo[1]).M();
+            dEtajjAK4calo_ = fabs(etaAK4calo_->at(0) - etaAK4calo_->at(1));
+            dPhijjAK4calo_ = fabs(deltaPhi(phiAK4calo_->at(0),
+                                           phiAK4calo_->at(1)));
+        }
+        mhtAK4calo_ = mhtAK4calo.Pt();
+        if (htAK4calo > 0.0) {
+            metcaloSig_ = metcalo_/htAK4calo;
+            mhtAK4caloSig_ = mhtAK4calo_/htAK4calo;
+        }
+
+    }
     //---- Fill Tree ---
     outTree_->Fill();
     //------------------
@@ -804,7 +1020,34 @@ void DijetScoutingTreeProducer::initialize()
         phoMultAK4reco_  ->clear();
     }
 
+    if (doCalo_) {
+        rhocalo_         = -999;
+        metcalo_         = -999;
+        mhtAK4calo_      = -999;
+        mhtAK4caloSig_   = -999;
+        metcaloSig_      = -999;
+        nJetsAK4calo_    = -999;
+        htAK4calo_       = -999;
+        mjjAK4calo_      = -999;
+        dEtajjAK4calo_   = -999;
+        dPhijjAK4calo_   = -999;
+        ptAK4calo_       ->clear();
+        etaAK4calo_      ->clear();
+        phiAK4calo_      ->clear();
+        massAK4calo_     ->clear();
+        energyAK4calo_   ->clear();
+        areaAK4calo_     ->clear();
+        csvAK4calo_      ->clear();
+        hadfAK4calo_      ->clear();
+        emfAK4calo_      ->clear();
+        hf_hfAK4calo_    ->clear();
+        hf_emfAK4calo_   ->clear();
+        jecAK4calo_      ->clear();
+        idAK4calo_       ->clear();
+    }
+
     triggerResult_->clear();
+    l1Result_->clear();
 }
 
 
