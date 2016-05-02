@@ -44,12 +44,23 @@ lumiSummary_crab_ParkingScoutingMonitor__Run2015D-PromptReco-v4__MINIAOD.json
 (CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/ParkingScoutingMonitor_Run2015D_Jan-12-2016_20160112_151048/ParkingScoutingMonitor/crab_ParkingScoutingMonitor__Run2015D-PromptReco-v4__MINIAOD/160112_211104/0000/
 (ROME T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/Dijet13TeVScouting/rootTrees_big/ParkingScoutingMonitor_Run2015D_v4_Jan-12-2016_20160112_151048/ (7 files not copied: )
 
-New version with calojet information included:
-(CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ParkingScoutingMonitor/Run2015D/
-
 1746.320 /pb
 
 8185013 events
+
+2)
+
+/ParkingScoutingMonitor/Run2015D-PromptReco-v4/MINIAOD and /ParkingScoutingMonitor/Run2015D-v1/RAW
+
+lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
+
+(CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ParkingScoutingMonitor/Run2015D/
+
+(Note: includes information on HLT calojets)
+
+1790.062 /pb
+
+8933994 events
 
 
 ScoutingPFCommissioning
@@ -97,21 +108,6 @@ lumiSummary_crab_CaloScoutingCommissioning_Run2015D-PromptReco-v4.json
 1981.050 /pb
 
 7539412 events
-
-ParkingScoutingMonitor
-============
-
-1)
-
-/ParkingScoutingMonitor/Run2015D-v1/RAW
-
-lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
-
-(CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ParkingScoutingMonitor/Run2015D/
-
-1790.062 /pb
-
-8933994 events
 
 
 ==================
