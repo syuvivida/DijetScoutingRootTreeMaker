@@ -58,7 +58,7 @@ lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
 
 (Note: includes information on HLT calojets)
 
-1790.062 /pb
+1731.932 /pb
 
 8933994 events
 
@@ -108,21 +108,6 @@ lumiSummary_crab_CaloScoutingCommissioning_Run2015D-PromptReco-v4.json
 1917.775 /pb
 
 7539412 events
-
-ParkingScoutingMonitor
-============
-
-1)
-
-/ParkingScoutingMonitor/Run2015D-v1/RAW
-
-lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
-
-(CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ParkingScoutingMonitor/Run2015D/
-
-1731.932 /pb
-
-8933994 events
 
 
 ==================
