@@ -90,7 +90,7 @@ lumiSummary_crab_CaloScoutingHT_Run2015D-PromptReco-v4.json
 
 (CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ScoutingCaloHT/Run2015D/
 
-1981.050 /pb
+1917.775 /pb
 
 766009664 events
 
@@ -105,9 +105,24 @@ lumiSummary_crab_CaloScoutingCommissioning_Run2015D-PromptReco-v4.json
 
 (CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ScoutingCaloCommissioning/Run2015D/
 
-1981.050 /pb
+1917.775 /pb
 
 7539412 events
+
+ParkingScoutingMonitor
+============
+
+1)
+
+/ParkingScoutingMonitor/Run2015D-v1/RAW
+
+lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
+
+(CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ParkingScoutingMonitor/Run2015D/
+
+1731.932 /pb
+
+8933994 events
 
 
 ==================
