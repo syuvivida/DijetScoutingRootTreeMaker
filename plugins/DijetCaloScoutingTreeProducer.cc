@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace edm;
+using namespace l1t;
 
 
 DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet& cfg):
@@ -85,16 +86,12 @@ DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet&
     }
 
     if (doL1_) {
+        algToken_ = consumes<BXVector<GlobalAlgBlk>>(cfg.getParameter<InputTag>("AlgInputTag"));
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
-        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
-
-        //l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true);
-	l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true, *this, l1InputTag_, l1InputTag_, l1InputTag_);
+	l1GtUtils_ = new L1TGlobalUtil();
     }
     else {
         l1Seeds_ = std::vector<std::string>();
-        l1InputTag_ = edm::InputTag();
-
         l1GtUtils_ = 0;
     }
 }
@@ -294,6 +291,11 @@ void DijetCaloScoutingTreeProducer::endJob()
     }
 }
 
+void DijetCaloScoutingTreeProducer::beginRun(const Run&, const EventSetup& iSetup)
+{
+}
+
+
 
 void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
                                         const EventSetup& iSetup)
@@ -417,22 +419,14 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
 
     //-------------- L1 Info -----------------------------------
     if (doL1_) {
-        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, true);
-        int iErrorCode = -1;
+        l1GtUtils_->retrieveL1(iEvent,iSetup,algToken_);
         for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
-  	    bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1Seeds_[iseed], iErrorCode);
+  	    bool l1htbit = 0;
+	    l1GtUtils_->getFinalDecisionByName(l1Seeds_[iseed], l1htbit);
             l1Result_->push_back( l1htbit );
-            if (iErrorCode % 10 == 1) {
-                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
-                l1Result_->push_back( false ); 
-            } 
-            else if (iErrorCode > 0) {
-                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
-                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
-                l1Result_->push_back( false );
-            }
-        }
+	}
     }
+    
 
 
     //-------------- Jets -----------------------------------------

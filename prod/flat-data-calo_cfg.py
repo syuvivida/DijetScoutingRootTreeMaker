@@ -19,7 +19,7 @@ process.GlobalTag.globaltag = "80X_dataRun2_HLT_v12"
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
                                  fileName=cms.string("dijetNtuple.root"),
@@ -41,14 +41,9 @@ process.source = cms.Source(
     )
 )
 
-#unpack trigger results from RAW
-#process.gtDigis = cms.EDProducer( "L1GlobalTriggerRawToDigi",
-#    DaqGtFedId = cms.untracked.int32( 813 ),
-#    DaqGtInputTag = cms.InputTag( "hltFEDSelectorL1" ),
-#    UnpackBxInEvent = cms.int32( -1 ),
-#    ActiveBoardsMask = cms.uint32( 0xffff )
-#)
-
+##--- l1 stage2 digis ---
+process.load("EventFilter.L1TRawToDigi.gtStage2Digis_cfi")
+process.gtStage2Digis.InputLabel = cms.InputTag( "hltFEDSelectorL1" )
 
 ##-------------------- User analyzer  --------------------------------
 
@@ -176,14 +171,10 @@ process.dijetscouting = cms.EDAnalyzer(
     L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt'),
 
     #L1 trigger info
-    doL1 = cms.bool(False),
-    l1InputTag = cms.InputTag("gtDigis","","jetToolbox"),
+    doL1 = cms.bool(True),
+    AlgInputTag = cms.InputTag("gtStage2Digis"),
 
-    #l1GtRecordInputTag = cms.InputTag("l1GtTriggerMenuLite"),
-    #l1GtReadoutRecordInputTag = cms.InputTag(""),
-    #l1GtTriggerMenuLiteInputTag =  cms.InputTag("l1GtTriggerMenuLite"),
-
-    l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175")
+    l1Seeds = cms.vstring("L1_HTT120","L1_HTT170","L1_HTT200")
 )
 
 
