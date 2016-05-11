@@ -87,11 +87,14 @@ DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet&
     if (doL1_) {
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
         l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
-        l1GtUtils_ = new L1GtUtils();
+
+        //l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true);
+	l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true, *this, l1InputTag_, l1InputTag_, l1InputTag_);
     }
     else {
         l1Seeds_ = std::vector<std::string>();
         l1InputTag_ = edm::InputTag();
+
         l1GtUtils_ = 0;
     }
 }
@@ -414,11 +417,10 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
 
     //-------------- L1 Info -----------------------------------
     if (doL1_) {
-        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
+        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, true);
         int iErrorCode = -1;
         for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
-            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
-                                                            l1Seeds_[iseed], iErrorCode);
+  	    bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1Seeds_[iseed], iErrorCode);
             l1Result_->push_back( l1htbit );
             if (iErrorCode % 10 == 1) {
                 std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;

@@ -96,12 +96,10 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
 
     if (doL1_) {
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
-        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
-        l1GtUtils_ = new L1GtUtils();
+        l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true);
     }
     else {
         l1Seeds_ = std::vector<std::string>();
-        l1InputTag_ = edm::InputTag();
         l1GtUtils_ = 0;
     }
 }
@@ -585,8 +583,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
         int iErrorCode = -1;
         for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
-            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
-                                                            l1Seeds_[iseed], iErrorCode);
+	    bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1Seeds_[iseed], iErrorCode);
             l1Result_->push_back( l1htbit );
             //Fill histogram
             if (l1htbit) {
