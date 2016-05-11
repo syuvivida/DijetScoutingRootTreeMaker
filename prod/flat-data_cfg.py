@@ -61,6 +61,9 @@ process.source = cms.Source(
     )
 )
 
+##--- l1 stage2 digis ---
+process.load("EventFilter.L1TRawToDigi.gtStage2Digis_cfi")
+process.gtStage2Digis.InputLabel = cms.InputTag( "hltFEDSelectorL1" )
 
 
 ##-------------------- User analyzer  --------------------------------
@@ -240,6 +243,13 @@ process.dijetscouting = cms.EDAnalyzer(
     L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L1FastJet_AK4PFHLT.txt'),
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L2Relative_AK4PFHLT.txt'),
     L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt')
+
+    #L1 trigger info                                                                                                                                                                         
+    doL1 = cms.bool(True),
+    AlgInputTag = cms.InputTag("gtStage2Digis"),
+
+    l1Seeds = cms.vstring("L1_HTT120","L1_HTT170","L1_HTT200")
+
 )
 
 
