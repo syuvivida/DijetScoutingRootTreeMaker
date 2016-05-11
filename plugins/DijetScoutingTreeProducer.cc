@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace edm;
+using namespace l1t;
 
 
 DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
@@ -95,8 +96,9 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     }
 
     if (doL1_) {
+        algToken_ = consumes<BXVector<GlobalAlgBlk>>(cfg.getParameter<InputTag>("AlgInputTag"));
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
-        l1GtUtils_ = new L1GtUtils(cfg, consumesCollector(), true);
+        l1GtUtils_ = new L1TGlobalUtil();
     }
     else {
         l1Seeds_ = std::vector<std::string>();
@@ -580,25 +582,16 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     //-------------- L1 Info -----------------------------------
     l1PassHisto_->Fill("totalEvents", 1);
     if (doL1_) {
-        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
-        int iErrorCode = -1;
-        for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
-	    bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1Seeds_[iseed], iErrorCode);
-            l1Result_->push_back( l1htbit );
-            //Fill histogram
-            if (l1htbit) {
-                l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
-            }
-            if (iErrorCode % 10 == 1) {
-                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
-                l1Result_->push_back( false ); 
-            } 
-            else if (iErrorCode > 0) {
-                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
-                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
-                l1Result_->push_back( false );
-            }
-        }
+      l1GtUtils_->retrieveL1(iEvent,iSetup,algToken_);
+      for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
+	bool l1htbit = 0;
+	l1GtUtils_->getFinalDecisionByName(l1Seeds_[iseed], l1htbit);
+	l1Result_->push_back( l1htbit );
+	//Fill histogram
+	if (l1htbit) {
+	  l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
+	}
+      }
     }
 
     //-------------- Jets -----------------------------------------

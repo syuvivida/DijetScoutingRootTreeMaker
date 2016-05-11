@@ -31,7 +31,8 @@
 #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
-#include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
+#include "L1Trigger/L1TGlobal/interface/L1TGlobalUtil.h"
+
 
 // Root include files
 #include "TLorentzVector.h"
@@ -94,9 +95,9 @@ private:
     TH1F *l1PassHisto_, *l1NamesHisto_;
     //---- L1 ----
     bool doL1_;
-    L1GtUtils *l1GtUtils_;
+    edm::EDGetToken algToken_;
+    l1t::L1TGlobalUtil *l1GtUtils_;
     std::vector<std::string> l1Seeds_;
-    edm::InputTag l1InputTag_;
     std::vector<bool> *l1Result_;
     //---- output TREE variables ------
     //---- global event variables -----
