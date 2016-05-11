@@ -15,7 +15,9 @@ Clone and compile repository:
 
 ```
 git clone https://github.com/CMSDIJET/DijetScoutingRootTreeMaker.git CMSDIJET/DijetScoutingRootTreeMaker
-scram b
+git fetch origin branch_74x:branch_74x
+git checkout branch_74x
+scram b -j4
 ```
 
 Edit the configuration file `CMSDIJET/DijetScoutingRootTreeMaker/prod/flat-data_cfg.py` and then run with
