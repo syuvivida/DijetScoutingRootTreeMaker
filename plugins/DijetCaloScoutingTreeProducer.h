@@ -83,6 +83,7 @@ private:
     std::vector<std::string> vtriggerAlias_, vtriggerSelection_;
     std::vector<int> vtriggerDuplicates_;
     TH1F *triggerPassHisto_, *triggerNamesHisto_;
+    TH1F *l1PassHisto_, *l1NamesHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
     int   isData_, run_, evt_, nVtx_, lumi_;

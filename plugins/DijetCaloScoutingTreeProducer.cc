@@ -115,6 +115,18 @@ void DijetCaloScoutingTreeProducer::beginJob()
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
     }
+    l1NamesHisto_ = fs_->make<TH1F>("L1Names", "L1Names", 1, 0, 1);
+    l1NamesHisto_->SetCanExtend(TH1::kAllAxes);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+      l1NamesHisto_->Fill(l1Seeds_[i].c_str(), 1);
+    }
+    l1PassHisto_ = fs_->make<TH1F>("L1Pass", "L1Pass", 1, 0, 1);
+    l1PassHisto_->SetCanExtend(TH1::kAllAxes);
+    l1PassHisto_->Fill("totalEvents", 0.0);
+    for (unsigned i=0; i<l1Seeds_.size(); ++i) {
+      l1PassHisto_->Fill(l1Seeds_[i].c_str(), 0.0);
+    }
+
 
     //--- book the tree -----------------------
     outTree_ = fs_->make<TTree>("events","events");
@@ -418,12 +430,18 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
     }
 
     //-------------- L1 Info -----------------------------------
+    l1PassHisto_->Fill("totalEvents", 1);
     if (doL1_) {
         l1GtUtils_->retrieveL1(iEvent,iSetup,algToken_);
         for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
   	    bool l1htbit = 0;
 	    l1GtUtils_->getFinalDecisionByName(l1Seeds_[iseed], l1htbit);
             l1Result_->push_back( l1htbit );
+	    //Fill histogram
+	    if (l1htbit) {
+	      l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
+	    }
+
 	}
     }
     
