@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace edm;
+using namespace l1t;
 
 
 DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
@@ -95,13 +96,12 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     }
 
     if (doL1_) {
+        algToken_ = consumes<BXVector<GlobalAlgBlk>>(cfg.getParameter<InputTag>("AlgInputTag"));
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
-        l1InputTag_ = cfg.getParameter<edm::InputTag>("l1InputTag");
-        l1GtUtils_ = new L1GtUtils();
+        l1GtUtils_ = new L1TGlobalUtil();
     }
     else {
         l1Seeds_ = std::vector<std::string>();
-        l1InputTag_ = edm::InputTag();
         l1GtUtils_ = 0;
     }
 }
@@ -115,23 +115,23 @@ void DijetScoutingTreeProducer::beginJob()
 {
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
-    triggerNamesHisto_->SetBit(TH1::kCanRebin);
+    triggerNamesHisto_->SetCanExtend(TH1::kAllAxes);
     for (unsigned i=0; i<vtriggerSelection_.size(); ++i) {
         triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(), 1);
     }
     triggerPassHisto_ = fs_->make<TH1F>("TriggerPass", "TriggerPass", 1, 0, 1);
-    triggerPassHisto_->SetBit(TH1::kCanRebin);
+    triggerPassHisto_->SetCanExtend(TH1::kAllAxes);
     triggerPassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
     }
     l1NamesHisto_ = fs_->make<TH1F>("L1Names", "L1Names", 1, 0, 1);
-    l1NamesHisto_->SetBit(TH1::kCanRebin);
+    l1NamesHisto_->SetCanExtend(TH1::kAllAxes);
     for (unsigned i=0; i<l1Seeds_.size(); ++i) {
         l1NamesHisto_->Fill(l1Seeds_[i].c_str(), 1);
     }
     l1PassHisto_ = fs_->make<TH1F>("L1Pass", "L1Pass", 1, 0, 1);
-    l1PassHisto_->SetBit(TH1::kCanRebin);
+    l1PassHisto_->SetCanExtend(TH1::kAllAxes);
     l1PassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<l1Seeds_.size(); ++i) {
         l1PassHisto_->Fill(l1Seeds_[i].c_str(), 0.0);
@@ -582,26 +582,16 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     //-------------- L1 Info -----------------------------------
     l1PassHisto_->Fill("totalEvents", 1);
     if (doL1_) {
-        l1GtUtils_->getL1GtRunCache(iEvent, iSetup, true, false);
-        int iErrorCode = -1;
-        for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
-            bool l1htbit = l1GtUtils_->decisionBeforeMask(iEvent, l1InputTag_, l1InputTag_, 
-                                                            l1Seeds_[iseed], iErrorCode);
-            l1Result_->push_back( l1htbit );
-            //Fill histogram
-            if (l1htbit) {
-                l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
-            }
-            if (iErrorCode % 10 == 1) {
-                std::cout << "L1 seed " << l1Seeds_[iseed] << " not found!" << std::endl;
-                l1Result_->push_back( false ); 
-            } 
-            else if (iErrorCode > 0) {
-                //See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TriggerL1GtUtils for description of error codes
-                std::cout << "Problem getting L1 decision for " << l1Seeds_[iseed] << " (Error code: " << iErrorCode << ")" << std::endl;
-                l1Result_->push_back( false );
-            }
-        }
+      l1GtUtils_->retrieveL1(iEvent,iSetup,algToken_);
+      for( unsigned int iseed = 0; iseed < l1Seeds_.size(); iseed++ ) {
+	bool l1htbit = 0;
+	l1GtUtils_->getFinalDecisionByName(l1Seeds_[iseed], l1htbit);
+	l1Result_->push_back( l1htbit );
+	//Fill histogram
+	if (l1htbit) {
+	  l1PassHisto_->Fill(l1Seeds_[iseed].c_str(), 1);
+	}
+      }
     }
 
     //-------------- Jets -----------------------------------------
