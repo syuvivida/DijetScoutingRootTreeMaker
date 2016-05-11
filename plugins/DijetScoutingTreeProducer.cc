@@ -115,23 +115,23 @@ void DijetScoutingTreeProducer::beginJob()
 {
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
-    triggerNamesHisto_->SetBit(TH1::kCanRebin);
+    triggerNamesHisto_->SetCanExtend(TH1::kAllAxes);
     for (unsigned i=0; i<vtriggerSelection_.size(); ++i) {
         triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(), 1);
     }
     triggerPassHisto_ = fs_->make<TH1F>("TriggerPass", "TriggerPass", 1, 0, 1);
-    triggerPassHisto_->SetBit(TH1::kCanRebin);
+    triggerPassHisto_->SetCanExtend(TH1::kAllAxes);
     triggerPassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
     }
     l1NamesHisto_ = fs_->make<TH1F>("L1Names", "L1Names", 1, 0, 1);
-    l1NamesHisto_->SetBit(TH1::kCanRebin);
+    l1NamesHisto_->SetCanExtend(TH1::kAllAxes);
     for (unsigned i=0; i<l1Seeds_.size(); ++i) {
         l1NamesHisto_->Fill(l1Seeds_[i].c_str(), 1);
     }
     l1PassHisto_ = fs_->make<TH1F>("L1Pass", "L1Pass", 1, 0, 1);
-    l1PassHisto_->SetBit(TH1::kCanRebin);
+    l1PassHisto_->SetCanExtend(TH1::kAllAxes);
     l1PassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<l1Seeds_.size(); ++i) {
         l1PassHisto_->Fill(l1Seeds_[i].c_str(), 0.0);

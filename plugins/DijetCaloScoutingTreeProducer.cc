@@ -105,12 +105,12 @@ void DijetCaloScoutingTreeProducer::beginJob()
 {
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
-    triggerNamesHisto_->SetBit(TH1::kCanRebin);
+    triggerNamesHisto_->SetCanExtend(TH1::kAllAxes);
     for (unsigned i=0; i<vtriggerSelection_.size(); ++i) {
         triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(), 1);
     }
     triggerPassHisto_ = fs_->make<TH1F>("TriggerPass", "TriggerPass", 1, 0, 1);
-    triggerPassHisto_->SetBit(TH1::kCanRebin);
+    triggerPassHisto_->SetCanExtend(TH1::kAllAxes);
     triggerPassHisto_->Fill("totalEvents", 0.0);
     for (unsigned i=0; i<vtriggerAlias_.size(); ++i) {
         triggerPassHisto_->Fill(vtriggerAlias_[i].c_str(), 0.0);
