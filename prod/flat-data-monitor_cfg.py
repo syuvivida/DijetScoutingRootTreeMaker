@@ -262,6 +262,7 @@ process.dijetscouting = cms.EDAnalyzer(
     #L1 trigger info
     doL1 = cms.bool(True),
     l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175","L1_ZeroBias","L1_DoubleMu_10_3p5","L1_DoubleMu_12_5"),
+    AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1InputTag = cms.InputTag("gtDigis","","RECO")
 )
 
