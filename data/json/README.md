@@ -18,6 +18,10 @@ lumiSummary_crab_ScoutingPFHT__Run2015D-v1__RAW.json
 
 78227163 events
 
+2)
+
+/ScoutingPFHT/Run2016B-v1/RAW
+
 
 ParkingScoutingMonitor
 ======================
@@ -62,6 +66,12 @@ lumiSummary_crab_CaloParkingMonitor_Run2015D-PromptReco-v4.json
 
 8933994 events
 
+3) 
+
+/ParkingScoutingMonitor/Run2016B-v1/RAW
+
+(CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/CaloScoutingMonitor/DiJetNtupleV3.0/v1/sixie/ParkingScoutingMonitor/DiJetNtuplerV3p0_ToCERN_Data_2016_CaloScoutingMonitor_Run2016B-PromptReco-v1_v1_v2/160512_200115/0000/
+
 
 ScoutingPFCommissioning
 =======================
@@ -79,6 +89,12 @@ lumiSummary_crab_ScoutingPFCommissioning__Run2015D-v1__RAW.json
 
 19400055 events
 
+2) 
+
+/ScoutingPFCommissioning/Run2016B-v1/RAW
+
+
+
 ScoutingCaloHT
 ============
 
@@ -94,6 +110,13 @@ lumiSummary_crab_CaloScoutingHT_Run2015D-PromptReco-v4.json
 
 766009664 events
 
+2)
+
+/ScoutingCaloHT/Run2016B-v1/RAW
+
+(CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/CaloScouting/DiJetNtupleV3.0/v1/sixie/ScoutingCaloHT/DiJetNtuplerV3p0_ToCERN_Data_2016_CaloScouting_Run2016B-v1_v1_v1/160512_135021/0000/
+
+
 ScoutingCaloCommissioning
 ============
 
@@ -103,12 +126,17 @@ ScoutingCaloCommissioning
 
 lumiSummary_crab_CaloScoutingCommissioning_Run2015D-PromptReco-v4.json
 
-(CERN EOS) eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ScoutingCaloCommissioning/Run2015D/
+(CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/CaloScouting/v1.1/ScoutingCaloCommissioning/Run2015D/
 
 1917.775 /pb
 
 7539412 events
 
+2)
+
+/ScoutingCaloCommissioning/Run2016B-v1/RAW
+
+(CERN EOS) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/CaloScouting/DiJetNtupleV3.0/v1/sixie/ScoutingCaloCommissioning/DiJetNtuplerV3p0_ToCERN_Data_2016_CaloScouting_Run2016B-v1_v1_v1/160512_134847/0000/
 
 ==================
 ======= MC =======
