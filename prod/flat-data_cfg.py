@@ -8,7 +8,7 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- Global Tag ------------------
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 #process.GlobalTag.globaltag = THISGLOBALTAG
 
@@ -54,10 +54,11 @@ process.source = cms.Source(
         #'file:/eos/uscms/store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_3CB17709-3868-E511-B794-02163E011A08.root'
         ## ScoutingPFHT
         #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/258/742/00000/9EDBF901-6070-E511-B8BD-02163E01466B.root' #old config (257933<=run<259636)
-        'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root' #new config (run>=259636)
+        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root' #new config (run>=259636)
         ## ScoutingPFCommissioning
         #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/258/742/00000/46EA74B9-6270-E511-B9E2-02163E014534.root' #old config (257933<=run<259636)
         #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/260/627/00000/42D69A83-F181-E511-9C31-02163E014698.root' #new config (run>=259636)
+        '/store/data/Run2016B/ScoutingPFHT/RAW/v1/000/272/818/00000/FADDFD99-6515-E611-8136-02163E0136FF.root' #(2016B data)
     )
 )
 
@@ -80,6 +81,7 @@ process.dijetscouting = cms.EDAnalyzer(
     candidates = cms.InputTag('hltScoutingPFPacker'),
     # ParkingScoutingMonitor
     doRECO     = cms.bool(False),
+    doCalo     = cms.bool(False),
 
     ## trigger ###################################
     triggerAlias = cms.vstring(
@@ -242,7 +244,7 @@ process.dijetscouting = cms.EDAnalyzer(
 
     L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L1FastJet_AK4PFHLT.txt'),
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L2Relative_AK4PFHLT.txt'),
-    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt')
+    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt'),
 
     #L1 trigger info                                                                                                                                                                         
     doL1 = cms.bool(True),
