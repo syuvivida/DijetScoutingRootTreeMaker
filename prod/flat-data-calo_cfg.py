@@ -37,7 +37,7 @@ process.options = cms.untracked.PSet(
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/user/duanders/ScoutingCaloHT_Run272798.root'
+        '/store/data/Run2016B/ScoutingCaloHT/RAW/v1/000/272/784/00000/5891409E-4A14-E611-98FE-02163E01393D.root'
     )
 )
 
