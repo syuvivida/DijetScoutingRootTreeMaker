@@ -9,8 +9,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-
-#process.GlobalTag.globaltag = THISGLOBALTAG
+#process.GlobalTag.globaltag = "80X_dataRun2_HLT_v12"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -22,6 +22,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
                                  fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string("dijetNtuple.root"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -50,14 +51,6 @@ process.out = cms.OutputModule('PoolOutputModule',
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        #'file:/eos/uscms/store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_4C8EBDCE-5877-E511-957C-02163E014600.root'
-        #'file:/eos/uscms/store/user/dgsheffi/ScoutingPFHT/ScoutingPFHT_3CB17709-3868-E511-B794-02163E011A08.root'
-        ## ScoutingPFHT
-        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/258/742/00000/9EDBF901-6070-E511-B8BD-02163E01466B.root' #old config (257933<=run<259636)
-        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFHT/RAW/v1/000/260/627/00000/70F86CB6-D881-E511-A4A0-02163E014303.root' #new config (run>=259636)
-        ## ScoutingPFCommissioning
-        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/258/742/00000/46EA74B9-6270-E511-B9E2-02163E014534.root' #old config (257933<=run<259636)
-        #'root://xrootd.unl.edu//store/data/Run2015D/ScoutingPFCommissioning/RAW/v1/000/260/627/00000/42D69A83-F181-E511-9C31-02163E014698.root' #new config (run>=259636)
         '/store/data/Run2016B/ScoutingPFHT/RAW/v1/000/272/818/00000/FADDFD99-6515-E611-8136-02163E0136FF.root' #(2016B data)
     )
 )

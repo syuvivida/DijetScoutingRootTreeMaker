@@ -6,8 +6,8 @@ Information: https://twiki.cern.ch/twiki/bin/viewauth/CMS/ExoDijet13TeV#Analysis
 Setup release:
 
 ```
-cmsrel CMSSW_8_0_7_patch2
-cd CMSSW_8_0_7_patch2/src/
+cmsrel CMSSW_8_0_8
+cd CMSSW_8_0_8/src/
 cmsenv
 ```
 
@@ -26,6 +26,7 @@ cmsRun flat-data_cfg.py
 ```
 
 Use the configuration file `flat-data-monitor_cfg.py` to run over the ParkingScoutingMonitor datasets.
+Use the configuration file `flat-data-calo_cfg.py` to run over the CaloScouting datasets.
 
 
 

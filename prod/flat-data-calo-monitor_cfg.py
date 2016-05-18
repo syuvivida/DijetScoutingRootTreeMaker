@@ -9,8 +9,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
-#process.GlobalTag.globaltag = THISGLOBALTAG
+#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -21,7 +21,8 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 fileName=cms.string('dijetNtuple.root'),
+                                 fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string('dijetNtuple.root'),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 

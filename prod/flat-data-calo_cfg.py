@@ -1,7 +1,6 @@
 import FWCore.ParameterSet.Config as cms
-from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('jetToolbox',eras.Run2_25ns)
+process = cms.Process('jetToolbox')
 
 process.load('PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff')
 process.load('Configuration.EventContent.EventContent_cff')
@@ -10,8 +9,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = "80X_dataRun2_HLT_v12"
-#process.GlobalTag.globaltag = THISGLOBALTAG
+#process.GlobalTag.globaltag = "80X_dataRun2_HLT_v12"
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -22,7 +21,8 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 fileName=cms.string("dijetNtuple.root"),
+                                 fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string("dijetNtuple.root"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -37,7 +37,7 @@ process.options = cms.untracked.PSet(
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/ScoutingCaloHT/RAW/v1/000/272/784/00000/5891409E-4A14-E611-98FE-02163E01393D.root'
+        '/store/data/Run2016B/ScoutingCaloHT/RAW/v1/000/272/784/00000/5891409E-4A14-E611-98FE-02163E01393D.root' #(2016B data)
     )
 )
 
