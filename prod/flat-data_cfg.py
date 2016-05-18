@@ -87,24 +87,26 @@ process.dijetscouting = cms.EDAnalyzer(
     triggerAlias = cms.vstring(
         # Scouting
         'CaloJet40_BTagScouting', #0
-        'CaloJet40_BTagScouting', 
+        'CaloJet40_BTagScouting',
         'CaloJet40_CaloScouting_PFScouting', #1
         'L1HTT_BTagScouting', #2
         'L1HTT_BTagScouting',
         'L1HTT_CaloScouting_PFScouting', #3
         'CaloScoutingHT250', #4
-        'BTagScoutingHT450', #5
+        'BTagScoutingHT410', #5
+        'PFScoutingHT410', #6
+        'BTagScoutingHT450', #7
         'BTagScoutingHT450',
-        'PFScoutingHT450', #6
-        'ZeroBias_PFScouting', #7
-        'ZeroBias_BTagScouting', #8
-        'L1DoubleMu_BTagScouting', #9
-        'L1DoubleMu_PFScouting', #10
-        'DoubleMu3_Mass10_BTagScouting', #11
-        'DoubleMu3_Mass10_PFScouting', #12
-        # RECO 
-        'PFHT800', #13
-        'PFHT650', #14
+        'PFScoutingHT450', #8
+        'ZeroBias_PFScouting', #9
+        'ZeroBias_BTagScouting', #10
+        'L1DoubleMu_BTagScouting', #11
+        'L1DoubleMu_PFScouting', #12
+        'DoubleMu3_Mass10_BTagScouting', #13
+        'DoubleMu3_Mass10_PFScouting', #14
+        # RECO
+        'PFHT800', #15
+        'PFHT650', #16
         'PFHT600', #...
         'PFHT475',
         'PFHT400',
@@ -141,6 +143,8 @@ process.dijetscouting = cms.EDAnalyzer(
         'DST_L1HTT_BTagScouting_v*',
         'DST_L1HTT_CaloScouting_PFScouting_v*',
         'DST_HT250_CaloScouting_v*',
+        'DST_HT410_BTagScouting_v*',
+        'DST_HT410_PFScouting_v*',
         'DST_HT450_PFReco_PFBTagCSVReco_PFScouting_v*',
         'DST_HT450_BTagScouting_v*',
         'DST_HT450_PFScouting_v*',
@@ -191,6 +195,8 @@ process.dijetscouting = cms.EDAnalyzer(
         1, # L1HTT_BTagScouting
         0, # L1HTT_CaloScouting_PFScouting
         0, # CaloScoutingHT250
+        0, # BTagScoutingHT410
+        0, # PFScoutingHT410
         0, # BTagScoutingHT450
         1, # BTagScoutingHT450
         0, # PFScoutingHT450
@@ -246,8 +252,8 @@ process.dijetscouting = cms.EDAnalyzer(
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L2Relative_AK4PFHLT.txt'),
     L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/74X_dataRun2_HLT_v1/74X_dataRun2_HLT_v1_L3Absolute_AK4PFHLT.txt'),
 
-    #L1 trigger info                                                                                                                                                                         
-    doL1 = cms.bool(True),
+    ## L1 trigger info ################
+    doL1 = cms.bool(False),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
 
     l1Seeds = cms.vstring("L1_HTT120","L1_HTT170","L1_HTT200")

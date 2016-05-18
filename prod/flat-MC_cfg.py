@@ -104,6 +104,8 @@ process.dijetscouting = cms.EDAnalyzer(
         'L1HTT_BTagScouting',
         'L1HTT_CaloScouting_PFScouting',
         'CaloScoutingHT250',
+        'BTagScoutingHT410',
+        'PFScoutingHT410',
         'BTagScoutingHT450',
         'BTagScoutingHT450',
         'PFScoutingHT450',
@@ -152,6 +154,8 @@ process.dijetscouting = cms.EDAnalyzer(
         'DST_L1HTT_BTagScouting_v*',
         'DST_L1HTT_CaloScouting_PFScouting_v*',
         'DST_HT250_CaloScouting_v*',
+        'DST_HT410_BTagScouting_v*',
+        'DST_HT410_PFScouting_v*',
         'DST_HT450_PFReco_PFBTagCSVReco_PFScouting_v*',
         'DST_HT450_BTagScouting_v*',
         'DST_HT450_PFScouting_v*',
@@ -202,6 +206,8 @@ process.dijetscouting = cms.EDAnalyzer(
         1, # L1HTT_BTagScouting
         0, # L1HTT_CaloScouting_PFScouting
         0, # CaloScoutingHT250
+        0, # BTagScoutingHT410
+        0, # PFScoutingHT410
         0, # BTagScoutingHT450
         1, # BTagScoutingHT450
         0, # PFScoutingHT450
