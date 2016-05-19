@@ -7,6 +7,8 @@ L1Info  = ['L1_HTT200','L1_HTT240','L1_HTT270','L1_HTT280','L1_HTT300','L1_HTT32
 HLTInfo = [['CaloJet40_CaloScouting_PFScouting', 'DST_CaloJet40_CaloScouting_PFScouting_v*', 0],
            ['L1HTT_CaloScouting_PFScouting',     'DST_L1HTT_CaloScouting_PFScouting_v*',     0],
            ['CaloScoutingHT250',                 'DST_HT250_CaloScouting_v*',                0],
+           ['BTagScoutingHT410',                 'DST_HT410_BTagScouting_v*',                0],
+           ['PFScoutingHT410',                   'DST_HT410_PFScouting_v*',                  0],
            #RECO
            ['PFHT900',                           'HLT_PFHT900_v*',                           0],
            ['PFHT800',                           'HLT_PFHT800_v*',                           0],
