@@ -7,11 +7,13 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
+## ----------------- test GT and outName ------------------
+testGT = "80X_dataRun2_HLT_v12"
+testOutName = "dijetNtuple.root"
+
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = "80X_dataRun2_HLT_v12"
-#process.GlobalTag.globaltag = THISGLOBALTAG
-
+process.GlobalTag.globaltag = "THISGLOBALTAG"
 
 #--------------------- Report and output ---------------------------
 
@@ -21,8 +23,7 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 #fileName=cms.string(THISROOTFILE),
-                                 fileName=cms.string("dijetNtuple.root"),
+                                 fileName=cms.string("THISROOTFILE"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -30,6 +31,22 @@ process.options = cms.untracked.PSet(
         allowUnscheduled = cms.untracked.bool(True),
         wantSummary = cms.untracked.bool(False),
 )
+
+
+## ---------------- Interactive testing-----------------
+import FWCore.ParameterSet.VarParsing as VarParsing
+variables = VarParsing.VarParsing('analysis')
+variables.register('local',
+                   False,
+                   VarParsing.VarParsing.multiplicity.singleton,
+                   VarParsing.VarParsing.varType.bool,
+                   "Local running")
+
+variables.parseArguments()
+
+if variables.local == True:
+    process.GlobalTag.globaltag = testGT
+    process.TFileService.fileName = cms.string(testOutName)
 
 
 ##-------------------- Define the source  ----------------------------
@@ -47,7 +64,7 @@ process.gtStage2Digis.InputLabel = cms.InputTag( "hltFEDSelectorL1" )
 
 ##-------------------- User analyzer  --------------------------------
 #import trigger conf
-from CMSDIJET.DijetScoutingRootTreeMaker.HLTpaths_cfi import getConf
+from CMSDIJET.DijetScoutingRootTreeMaker.TriggerPaths_cfi import getHLTConf, getL1Conf
 
 process.dijetscouting = cms.EDAnalyzer(
     'DijetCaloScoutingTreeProducer',
@@ -61,9 +78,9 @@ process.dijetscouting = cms.EDAnalyzer(
     doRECO     = cms.bool(False),
 
     ## trigger ###################################
-    triggerAlias = cms.vstring(getConf(0)),
-    triggerSelection = cms.vstring(getConf(1)),
-    triggerDuplicates = cms.vint32(getConf(2)),
+    triggerAlias = cms.vstring(getHLTConf(0)),
+    triggerSelection = cms.vstring(getHLTConf(1)),
+    triggerDuplicates = cms.vint32(getHLTConf(2)),
 
     triggerConfiguration = cms.PSet(
         hltResults            = cms.InputTag('TriggerResults','','HLT'),
@@ -85,7 +102,7 @@ process.dijetscouting = cms.EDAnalyzer(
     doL1 = cms.bool(True),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
 
-    l1Seeds = cms.vstring("L1_HTT120","L1_HTT170","L1_HTT200")
+    l1Seeds = cms.vstring(getL1Conf())
 )
 
 

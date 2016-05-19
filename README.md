@@ -18,11 +18,11 @@ git clone https://github.com/CMSDIJET/DijetScoutingRootTreeMaker.git CMSDIJET/Di
 scram b -j4
 ```
 
-Edit the configuration file `CMSDIJET/DijetScoutingRootTreeMaker/prod/flat-data_cfg.py` and then run with
+Edit the configuration file `CMSDIJET/DijetScoutingRootTreeMaker/prod/flat-data_cfg.py` if needed and then run with
 
 ```
 cd CMSDIJET/DijetScoutingRootTreeMaker/prod/
-cmsRun flat-data_cfg.py
+cmsRun flat-data_cfg.py local=True
 ```
 
 Use the configuration file `flat-data-monitor_cfg.py` to run over the ParkingScoutingMonitor datasets.
@@ -41,4 +41,6 @@ git clone https://github.com/CMSDIJET/DijetScoutingRootTreeMaker.git CMSDIJET/Di
 git fetch origin branch_74x:branch_74x
 git checkout branch_74x
 scram b -j4
+
+cmsRun flat-data_cfg.py
 ```
