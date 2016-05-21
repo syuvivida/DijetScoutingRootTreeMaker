@@ -96,8 +96,8 @@ for line in ins:
 
 
     dict = {
-        "THISROOTFILE":"\""+sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root"+"\"",
-        "THISGLOBALTAG":"\""+globaltag+"\"",
+        "THISROOTFILE":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
+        "THISGLOBALTAG":globaltag,
         "LUMISPERJOB":lumisperjob,
         "OUTPUTFOLDER":namedir,
         "WORKINGAREA":storagedir+"/"+namedir+"/workdir",

@@ -7,11 +7,13 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
+## ----------------- test GT and outName ------------------
+testGT = "80X_dataRun2_HLT_v12"
+testOutName = "dijetNtuple.root"
+
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-#process.GlobalTag.globaltag = "74X_dataRun2_HLT_v1"
-process.GlobalTag.globaltag = THISGLOBALTAG
-
+process.GlobalTag.globaltag = "THISGLOBALTAG"
 
 #--------------------- Report and output ---------------------------
 
@@ -21,8 +23,7 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.TFileService=cms.Service("TFileService",
-                                 #fileName=cms.string("monitor.root"),
-                                 fileName=cms.string(THISROOTFILE),
+                                 fileName=cms.string("THISROOTFILE"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -44,32 +45,42 @@ process.out = cms.OutputModule('PoolOutputModule',
 #### NOT RUNNING OUTPUT MODULE ######
 # process.endpath = cms.EndPath(process.out)
 
+## ---------------- Interactive testing-----------------
+import FWCore.ParameterSet.VarParsing as VarParsing
+variables = VarParsing.VarParsing('analysis')
+variables.register('local',
+                   False,
+                   VarParsing.VarParsing.multiplicity.singleton,
+                   VarParsing.VarParsing.varType.bool,
+                   "Local running")
+
+variables.parseArguments()
+
+if variables.local == True:
+    process.GlobalTag.globaltag = testGT
+    process.TFileService.fileName = cms.string(testOutName)
+
 
 ##-------------------- Define the source  ----------------------------
-
-
 
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        'root://cmsxrootd-site.fnal.gov//store/data/Run2015D/ParkingScoutingMonitor/MINIAOD/PromptReco-v4/000/258/174/00000/282FDFDC-936C-E511-BF5A-02163E01444B.root'
+        '/store/data/Run2016B/ParkingScoutingMonitor/MINIAOD/PromptReco-v1/000/272/784/00000/D27BB262-0217-E611-9B7C-02163E01397D.root'
     ),
     secondaryFileNames = cms.untracked.vstring(
-        'root://cmsxrootd-site.fnal.gov//store/data/Run2015D/ParkingScoutingMonitor/RAW/v1/000/258/174/00000/F0EAFCF6-076A-E511-85D6-02163E013530.root'
+        '/store/data/Run2016B/ParkingScoutingMonitor/RAW/v1/000/272/784/00000/CA668606-5A14-E611-BBFD-02163E01197E.root'
     )
 )
 
-#unpack L1 trigger results from RAW
-process.gtDigis = cms.EDProducer( "L1GlobalTriggerRawToDigi",
-    DaqGtFedId = cms.untracked.int32( 813 ),
-    DaqGtInputTag = cms.InputTag( "hltFEDSelectorL1" ),
-    UnpackBxInEvent = cms.int32( -1 ),
-    ActiveBoardsMask = cms.uint32( 0xffff )
-)
+##--- l1 stage2 digis --- 
+process.load("EventFilter.L1TRawToDigi.gtStage2Digis_cfi")
+process.gtStage2Digis.InputLabel = cms.InputTag( "hltFEDSelectorL1" )
 
 
 ##-------------------- User analyzer  --------------------------------
-
+#import trigger conf
+from CMSDIJET.DijetScoutingRootTreeMaker.TriggerPaths_cfi import getHLTConf, getL1Conf
 
 process.dijetscouting = cms.EDAnalyzer(
     'DijetScoutingTreeProducer',
@@ -93,158 +104,10 @@ process.dijetscouting = cms.EDAnalyzer(
     metcalo     = cms.InputTag('hltScoutingCaloPacker:caloMetPt'),
 
     ## trigger ###################################
-    triggerAlias = cms.vstring(
-        # Scouting
-        'CaloJet40_BTagScouting',
-        'CaloJet40_BTagScouting',
-        'CaloJet40_CaloScouting_PFScouting',
-        'L1HTT_BTagScouting',
-        'L1HTT_BTagScouting',
-        'L1HTT_CaloScouting_PFScouting',
-        'CaloScoutingHT250',
-        'BTagScoutingHT410',
-        'PFScoutingHT410',
-        'BTagScoutingHT450',
-        'BTagScoutingHT450',
-        'PFScoutingHT450',
-        'ZeroBias_PFScouting',
-        'ZeroBias_BTagScouting',
-        'L1DoubleMu_BTagScouting',
-        'L1DoubleMu_PFScouting',
-        'DoubleMu3_Mass10_BTagScouting',
-        'DoubleMu3_Mass10_PFScouting',
-        # RECO
-        'PFHT800',
-        'PFHT650',
-        'PFHT600',
-        'PFHT475',
-        'PFHT400',
-        'PFHT350',
-        'PFHT300',
-        'PFHT250',
-        'PFHT200',
-        'PFHT650MJJ950',
-        'PFHT650MJJ900',
-        'PFJET500',
-        'PFJET450',
-        'PFJET200',
-        'HT2000',
-        'HT2500',
-        'Mu45Eta2p1',
-        'AK8DiPFJet280200TrimMass30Btag',
-        'AK8PFHT600TriMass50Btag',
-        'AK8PFHT700TriMass50',
-        'AK8PFJet360TrimMass50',
-        'CaloJet500NoJetID',
-        'DiPFJetAve300HFJEC',
-        'DiPFJetAve500',
-        'PFHT400SixJet30Btag',
-        'PFHT450SixJet40Btag',
-        'PFHT750FourJetPt50',
-        'QuadPFJetVBF'
-    ),
-    triggerSelection = cms.vstring(
-        # Scouting
-        'DST_CaloJet40_PFReco_PFBTagCSVReco_PFScouting_v*',
-        'DST_CaloJet40_BTagScouting_v*',
-        'DST_CaloJet40_CaloScouting_PFScouting_v*',
-        'DST_L1HTT125ORHTT150ORHTT175_PFReco_PFBTagCSVReco_PFScouting_v*',
-        'DST_L1HTT_BTagScouting_v*',
-        'DST_L1HTT_CaloScouting_PFScouting_v*',
-        'DST_HT250_CaloScouting_v*',
-        'DST_HT410_BTagScouting_v*',
-        'DST_HT410_PFScouting_v*',
-        'DST_HT450_PFReco_PFBTagCSVReco_PFScouting_v*',
-        'DST_HT450_BTagScouting_v*',
-        'DST_HT450_PFScouting_v*',
-        'DST_ZeroBias_PFScouting_v*',
-        'DST_ZeroBias_BTagScouting_v*',
-        'DST_L1DoubleMu_BTagScouting_v*',
-        'DST_L1DoubleMu_PFScouting_v*',
-        'DST_DoubleMu3_Mass10_BTagScouting_v*',
-        'DST_DoubleMu3_Mass10_PFScouting_v*',
-        # RECO
-        'HLT_PFHT800_v*',
-        'HLT_PFHT650_v*',
-        'HLT_PFHT600_v*',
-        'HLT_PFHT475_v*',
-        'HLT_PFHT400_v*',
-        'HLT_PFHT350_v*',
-        'HLT_PFHT300_v*',
-        'HLT_PFHT250_v*',
-        'HLT_PFHT200_v*',
-        'HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*',
-        'HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*',
-        'HLT_PFJet500_v*',
-        'HLT_PFJet450_v*',
-        'HLT_PFJet200_v*',
-        'HLT_HT2000_v*',
-        'HLT_HT2500_v*',
-        'HLT_Mu45_eta2p1_v*',
-        'HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV0p45_v*',
-        'HLT_AK8PFHT600_TrimR0p1PT0p03Mass50_BTagCSV0p45_v*',
-        'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v*',
-        'HLT_AK8PFJet360_TrimMass30_v*',
-        'HLT_CaloJet500_NoJetID_v*',
-        'HLT_DiPFJetAve300_HFJEC_v*',
-        'HLT_DiPFJetAve500_v*',
-        'HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v*',
-        'HLT_PFHT450_SixJet40_PFBTagCSV0p72_v*',
-        'HLT_PFHT750_4JetPt50_v*',
-        'HLT_QuadPFJet_VBF_v*'
-    ),
-    triggerDuplicates = cms.vint32(
-        ## If >0, trigger result will be ORed with result from the previous
-        ## trigger rather than being push_backed
-        # Scouting
-        0, # CaloJet40_BTagScouting
-        1, # CaloJet40_BTagScouting
-        0, # CaloJet40_CaloScouting_PFScouting
-        0, # L1HTT_BTagScouting
-        1, # L1HTT_BTagScouting
-        0, # L1HTT_CaloScouting_PFScouting
-        0, # CaloScoutingHT250
-        0, # BTagScoutingHT410
-        0, # PFScoutingHT410
-        0, # BTagScoutingHT450
-        1, # BTagScoutingHT450
-        0, # PFScoutingHT450
-        0, # ZeroBias_PFScouting
-        0, # ZeroBias_BTagScouting
-        0, # L1DoubleMu_BTagScouting
-        0, # L1DoubleMu_PFScouting
-        0, # DoubleMu3_Mass10_BTagScouting
-        0, # DoubleMu3_Mass10_PFScouting
-        # RECO
-        0, # PFHT800
-        0, # PFHT650
-        0, # PFHT600
-        0, # PFHT475
-        0, # PFHT400
-        0, # PFHT350
-        0, # PFHT300
-        0, # PFHT250
-        0, # PFHT200
-        0, # PFHT650MJJ950
-        0, # PFHT650MJJ900
-        0, # PFJET500
-        0, # PFJET450
-        0, # PFJET200
-        0, # HT2000
-        0, # HT2500
-        0, # Mu45Eta2p1
-        0, # AK8DiPFJet280200TrimMass30Btag
-        0, # AK8PFHT600TriMass50Btag
-        0, # AK8PFHT700TriMass50
-        0, # AK8PFJet360TrimMass50
-        0, # CaloJet500NoJetID
-        0, # DiPFJetAve300HFJEC
-        0, # DiPFJetAve500
-        0, # PFHT400SixJet30Btag
-        0, # PFHT450SixJet40Btag
-        0, # PFHT750FourJetPt50
-        0  # QuadPFJetVBF'
-    ),
+    triggerAlias = cms.vstring(getHLTConf(0)),
+    triggerSelection = cms.vstring(getHLTConf(1)),
+    triggerDuplicates = cms.vint32(getHLTConf(2)),
+
     triggerConfiguration = cms.PSet(
         hltResults            = cms.InputTag('TriggerResults','','HLT'),
         l1tResults            = cms.InputTag(''),
@@ -267,9 +130,9 @@ process.dijetscouting = cms.EDAnalyzer(
 
     #L1 trigger info
     doL1 = cms.bool(True),
-    l1Seeds = cms.vstring("L1_HTT125","L1_HTT150","L1_HTT175","L1_ZeroBias","L1_DoubleMu_10_3p5","L1_DoubleMu_12_5"),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
-    l1InputTag = cms.InputTag("gtDigis","","RECO")
+
+    l1Seeds = cms.vstring(getL1Conf())
 )
 
 
