@@ -45,15 +45,18 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4_DATA");
         L3corrAK4_DATA_ = cfg.getParameter<FileInPath>("L3corrAK4_DATA");
+        ResCorrAK4_DATA_ = cfg.getParameter<FileInPath>("ResCorrAK4_DATA");
 
         L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
         L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
         L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
+        L2L3ResAK4_DATA = new JetCorrectorParameters(ResCorrAK4_DATA_.fullPath());
 
         vector<JetCorrectorParameters> vParAK4_DATA;
         vParAK4_DATA.push_back(*L1ParAK4_DATA);
         vParAK4_DATA.push_back(*L2ParAK4_DATA);
         vParAK4_DATA.push_back(*L3ParAK4_DATA);
+        vParAK4_DATA.push_back(*L2L3ResAK4_DATA);
 
         JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
 
