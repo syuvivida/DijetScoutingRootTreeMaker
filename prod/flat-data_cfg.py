@@ -102,8 +102,10 @@ process.dijetscouting = cms.EDAnalyzer(
     ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2L3Residual_AK4PFHLT.txt'),
 
     ## L1 trigger info ################
-    doL1 = cms.bool(False),
+    doL1 = cms.bool(True),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
+    l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
+    l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
 
     l1Seeds = cms.vstring(getL1Conf())
 )

@@ -6,8 +6,8 @@ Information: https://twiki.cern.ch/twiki/bin/viewauth/CMS/ExoDijet13TeV#Analysis
 Setup release:
 
 ```
-cmsrel CMSSW_8_0_8
-cd CMSSW_8_0_8/src/
+cmsrel CMSSW_8_0_10
+cd CMSSW_8_0_10/src/
 cmsenv
 ```
 

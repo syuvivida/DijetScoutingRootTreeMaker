@@ -115,6 +115,8 @@ process.dijetscouting = cms.EDAnalyzer(
     #L1 trigger info
     doL1 = cms.bool(True),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
+    l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
+    l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
 
     l1Seeds = cms.vstring(getL1Conf())
 )
