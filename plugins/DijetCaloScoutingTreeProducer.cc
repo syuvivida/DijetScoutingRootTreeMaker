@@ -88,7 +88,7 @@ DijetCaloScoutingTreeProducer::DijetCaloScoutingTreeProducer(const ParameterSet&
     if (doL1_) {
         algToken_ = consumes<BXVector<GlobalAlgBlk>>(cfg.getParameter<InputTag>("AlgInputTag"));
         l1Seeds_ = cfg.getParameter<std::vector<std::string> >("l1Seeds");
-	l1GtUtils_ = new L1TGlobalUtil();
+	l1GtUtils_ = new L1TGlobalUtil(cfg,consumesCollector());
     }
     else {
         l1Seeds_ = std::vector<std::string>();
