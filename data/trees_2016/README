@@ -5,27 +5,23 @@ PF Scouting
 ScoutingPFHT
 ============
 
-1) EXAMPLE
-
-/ScoutingPFHT/Run2016B-v1/RAW
-
-lumiSummary_crab_ScoutingPFHT_Run2016B-v1_May-26-2016_20160526_144906.json
-
-(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFHT_Run2016B-v1_May-26-2016_20160526_144906/ScoutingPFHT/crab_ScoutingPFHT__Run2016B-v1__RAW/160526_194928/0000/
-
-65.728 /pb
-
-5159514 events
-
 /ScoutingPFHT/Run2016B-v2/RAW
 
-lumiSummary_crab_ScoutingPFHT_Run2016B-v2_May-26-2016_20160526_145020.json
+1) lumiSummary_crab_ScoutingPFHT_Run2016B-v2_May-26-2016_20160526_145020.json
 
 (CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFHT_Run2016B-v2_May-26-2016_20160526_145020/ScoutingPFHT/crab_ScoutingPFHT__Run2016B-v2__RAW/160526_195038/0000/
 
 637.364 /pb
 
 49615378 events
+
+2) lumiSummary_crab_ScoutingPFHT_Run2016B-v2_Jun-07-2016_20160607_123552.json
+
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/
+
+2038.447 /pb
+
+154391004 events
 
 ParkingScoutingMonitor
 ======================
