@@ -43,17 +43,37 @@ CALO Scouting
 ScoutingCaloHT
 ============
 
+/ScoutingCaloHT/Run2016B-v1/RAW
+
+lumiSummary_crab_ScoutingCaloCommissioning__Run2016B-v1__RAW.json
+
+66.411 / pb
+
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016B-v1_Jun-10-2016_20160610_230443/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016B-v1__RAW/160610_210501/0000/
+
 /ScoutingCaloHT/Run2016B-v2/RAW
 
-lumiSummary_crab_ScoutingCaloHT_Run2016B-v2_160525_043234.json
+lumiSummary_crab_ScoutingCaloCommissioning__Run2016B-v2__RAW.json
 
-630.947 /pb
+2688.820 / pb
 
-(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/CaloScouting/DiJetNtupleV3.0/v3/sixie/ScoutingCaloHT/DiJetNtuplerV3p0_ToCERN_Data_2016_CaloScouting_Run2016B-v2_v3_v1/160525_043234/0000/
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016B-v2_Jun-10-2016_20160610_230330/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016B-v2__RAW/160610_210349/0000/
 
 ScoutingCaloCommissioning
 ============
 
-/ScoutingCaloCommisioning/Run2016B-v2/RAW
+/ScoutingCaloCommissioning/Run2016B-v1/RAW
 
-(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/CaloScouting/DiJetNtupleV3.0/v3/sixie/ScoutingCaloCommissioning/DiJetNtuplerV3p0_ToCERN_Data_2016_CaloScouting_Run2016B-v2_v3_v1/160525_043200/0000/
+lumiSummary_crab_ScoutingCaloCommissioning__Run2016B-v1__RAW.json
+
+66.411 / pb
+
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016B-v1_Jun-10-2016_20160610_230518/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016B-v1__RAW/160610_210532/0000/
+
+/ScoutingCaloCommissioning/Run2016B-v2/RAW
+
+lumiSummary_crab_ScoutingCaloCommissioning__Run2016B-v2__RAW.json
+
+2688.820 / pb
+
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016B-v2_Jun-10-2016_20160610_230545/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016B-v2__RAW/160610_210607/0000/
