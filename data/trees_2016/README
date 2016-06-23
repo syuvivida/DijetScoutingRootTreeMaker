@@ -9,13 +9,18 @@ ScoutingPFHT
 
 1) lumiSummary_crab_ScoutingPFHT_Run2016B-v2_May-26-2016_20160526_145020.json
 (CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFHT_Run2016B-v2_May-26-2016_20160526_145020/ScoutingPFHT/crab_ScoutingPFHT__Run2016B-v2__RAW/160526_195038/0000/
-641.844 /pb
+637.364 /pb
 49615378 events
 
 2) lumiSummary_crab_ScoutingPFHT_Run2016B-v2_Jun-07-2016_20160607_123552.json
-(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/
-2049.742 /pb
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFHT_Run2016B-v2_Jun-07-2016_20160607_123552/ScoutingPFHT/crab_ScoutingPFHT__Run2016B-v2__RAW/160607_173608/0000/
+2038.447 /pb
 154391004 events
+
+3) lumiSummary_crab_ScoutingPFHT_Run2016B-v2_Jun-17-2016_20160617_141607.json
+(CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFHT_Run2016B-v2_Jun-17-2016_20160617_141607/ScoutingPFHT/crab_ScoutingPFHT__Run2016B-v2__RAW/160617_191631/0000/
+1516.745 /pb
+118410673
 
 ParkingScoutingMonitor
 ======================
@@ -30,7 +35,7 @@ ScoutingPFCommissioning
 
 1) lumiSummary_crab_ScoutingPFCommissioning__Run2016B-v2__RAW.json
 (CERN EOS) /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingPFCommisioning_Run2016B-v2_Jun-15-2016_20160615_202544/
-2691.586 /pb
+3589.854 /pb
 24410387
 
 
