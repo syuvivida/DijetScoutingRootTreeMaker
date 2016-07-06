@@ -54,7 +54,7 @@ if variables.local == True:
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/ScoutingCaloHT/RAW/v1/000/272/784/00000/5891409E-4A14-E611-98FE-02163E01393D.root' #(2016B data)
+        '/store/data/Run2016C/ScoutingCaloHT/RAW/v2/000/276/095/00000/A8255F4A-3E3F-E611-81C7-02163E0146CA.root' #2016C data
     )
 )
 

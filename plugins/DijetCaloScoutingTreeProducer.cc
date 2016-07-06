@@ -551,7 +551,7 @@ void DijetCaloScoutingTreeProducer::analyze(const Event& iEvent,
             massAK4_          ->push_back(ijet->m()*jecFactorsAK4.at(*i));
             energyAK4_        ->push_back(jet_energy*jecFactorsAK4.at(*i));
             areaAK4_          ->push_back(ijet->jetArea());
-            csvAK4_           ->push_back(-1);
+            csvAK4_           ->push_back(ijet->btagDiscriminator());
             idAK4_            ->push_back(id);
         }
     }
