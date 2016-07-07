@@ -55,16 +55,21 @@ if variables.local == True:
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/ParkingScoutingMonitor/MINIAOD/PromptReco-v1/000/272/784/00000/D27BB262-0217-E611-9B7C-02163E01397D.root'
+        '/store/data/Run2016C/ParkingScoutingMonitor/MINIAOD/PromptReco-v2/000/275/887/00000/72323F87-043F-E611-994A-02163E014344.root'
     ),
     secondaryFileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/ParkingScoutingMonitor/RAW/v1/000/272/784/00000/CA668606-5A14-E611-BBFD-02163E01197E.root'
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/22D507B4-133D-E611-A685-02163E0137AF.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/32B7B651-113D-E611-9344-02163E0146D2.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/60B83E85-123D-E611-88AB-02163E01262A.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/6C001C91-113D-E611-8F02-02163E013442.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/8CA58C17-143D-E611-976C-02163E014750.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/A4301411-133D-E611-8AF3-02163E0142BD.root',
+        '/store/data/Run2016C/ParkingScoutingMonitor/RAW/v2/000/275/887/00000/A6C5E304-133D-E611-B78B-02163E013621.root'
+        )
     )
-)
 
 ##------------------- l1 stage2 digis ------------------------------
 process.load("EventFilter.L1TRawToDigi.gtStage2Digis_cfi")
-process.gtStage2Digis.InputLabel = cms.InputTag( "hltFEDSelectorL1" )
 
 
 ##-------------------- User analyzer  --------------------------------
