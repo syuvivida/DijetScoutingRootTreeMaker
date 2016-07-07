@@ -9,4 +9,7 @@ python createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFHT_Run2015D-v1
 python createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFHT_Run2016B-v1_May-26-2016 -i Inputs_ScoutingPFHT/InputList_Run2016B-v1_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit
 
 # Run2016B-v2
-python createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFHT_Run2016B-v2_May-26-2016 -i Inputs_ScoutingPFHT/InputList_Run2016B-v2_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit
+python createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFHT_Run2016B-v2_Jul-05-2016 -i Inputs_ScoutingPFHT/InputList_Run2016B-v2_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit
+
+# Run2016C-v2
+python createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFHT_Run2016C-v2_Jul-05-2016 -i Inputs_ScoutingPFHT/InputList_Run2016C-v2_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit
