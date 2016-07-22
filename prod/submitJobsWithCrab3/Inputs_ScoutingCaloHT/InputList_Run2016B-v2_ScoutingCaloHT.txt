@@ -1,1 +1,1 @@
-/ScoutingCaloHT/Run2016B-v2/RAW -1 40 80X_dataRun2_HLT_v12
+/ScoutingCaloHT/Run2016B-v2/RAW -1 20 80X_dataRun2_HLT_v12
