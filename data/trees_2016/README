@@ -90,9 +90,9 @@ lumiSummary_crab_ScoutingCaloHT__Run2016C-v2__RAW.json
 lumiSummary_crab_ScoutingCaloHT__Run2016D-v2__RAW.json
 
 68.135 / pb
-6055.633 / pb
-2747.009 / pb
-588.563 / pb
+6110.719 / pb
+2757.818 / pb
+4386.698 / pb
 
 (CERN EOS)
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016B-v1_Jun-10-2016_20160610_230443/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016B-v1__RAW/160610_210501/0000/
@@ -101,6 +101,8 @@ lumiSummary_crab_ScoutingCaloHT__Run2016D-v2__RAW.json
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016B-v2_Jun-24-2016_20160625_165656/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016B-v2__RAW/160625_145744/0000/
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016C-v2_Jul-08-2016_20160708_073410/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016C-v2__RAW/160708_053439/0000/
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016D-v2_Jul-08-2016_20160708_073813/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016D-v2__RAW/160708_053842/0000/
+/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016D-v2_Jul-19-2016_20160720_025923/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016D-v2__RAW/160720_005956/0000/
+/store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloHT_Run2016D-v2_Jul-19-2016_20160720_025923/ScoutingCaloHT/crab_ScoutingCaloHT__Run2016D-v2__RAW/160720_005956/0001/
 
 ScoutingCaloCommissioning
 ============
@@ -116,9 +118,9 @@ lumiSummary_crab_ScoutingCaloCommissioning__Run2016C-v2__RAW.json
 lumiSummary_crab_ScoutingCaloCommissioning__Run2016D-v2__RAW.json
 
 68.135 / pb
-6055.633 / pb
-2747.009 / pb
-358.689 / pb
+6110.719 / pb
+2757.818 / pb
+4386.698 / pb
 
 (CERN EOS)
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016B-v1_Jun-10-2016_20160610_230518/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016B-v1__RAW/160610_210532/0000/
@@ -127,5 +129,7 @@ lumiSummary_crab_ScoutingCaloCommissioning__Run2016D-v2__RAW.json
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016B-v2_Jun-24-2016_20160625_074015/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016B-v2__RAW/160625_054104/0000/
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016C-v2_Jul-08-2016_20160708_073241/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016C-v2__RAW/160708_053311/0000/
 /store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016D-v2_Jul-08-2016_20160708_073739/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016D-v2__RAW/160708_053809/0000/
+store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016D-v2_Jul-19-2016_20160720_030239/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016D-v2__RAW/160720_010316/0000/
+store/group/phys_exotica/dijet/Dijet13TeVScouting/rootTrees_big/2016/ScoutingCaloCommissioning_Run2016D-v2_Jul-19-2016_20160720_030239/ScoutingCaloCommissioning/crab_ScoutingCaloCommissioning__Run2016D-v2__RAW/160720_010316/0001/
 
 
