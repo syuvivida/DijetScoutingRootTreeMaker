@@ -29,6 +29,14 @@ Use the configuration file `flat-data-monitor_cfg.py` to run over the ParkingSco
 Use the configuration file `flat-data-calo_cfg.py` to run over the CaloScouting datasets.
 Use the configuration file `flat-MC-calo_cfg.py` to run over the MC MINIAOD with Scouting content datasets.
 
+To run crab jobs for the 2017 data for example:
+
+```
+python createAndSubmitCrab.py -d Output_ScoutingCaloHT -v ScoutingCaloHT_Run2017C-v1_Dec-31-2017 -i Inputs_ScoutingCaloHT/InputList_Run2017C-v1_ScoutingCaloHT.txt -t crab3_template_data.py -c ../flat-data-calo_cfg.py --submit
+python createAndSubmitCrab.py -d Output_ScoutingCaloHT -v ScoutingCaloHT_Run2017D-v1_Dec-31-2017 -i Inputs_ScoutingCaloHT/InputList_Run2017D-v1_ScoutingCaloHT.txt -t crab3_template_data.py -c ../flat-data-calo_cfg.py --submit
+python createAndSubmitCrab.py -d Output_ScoutingCaloHT -v ScoutingCaloHT_Run2017E-v1_Dec-31-2017 -i Inputs_ScoutingCaloHT/InputList_Run2017E-v1_ScoutingCaloHT.txt -t crab3_template_data.py -c ../flat-data-calo_cfg.py --submit
+python createAndSubmitCrab.py -d Output_ScoutingCaloHT -v ScoutingCaloHT_Run2017F-v1_Dec-31-2017 -i Inputs_ScoutingCaloHT/InputList_Run2017F-v1_ScoutingCaloHT.txt -t crab3_template_data.py -c ../flat-data-calo_cfg.py --submit
+```
 
 In order to keep running in 80x, setup release:
 

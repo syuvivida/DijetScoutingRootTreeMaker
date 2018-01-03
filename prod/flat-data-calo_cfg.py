@@ -8,7 +8,7 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- test GT and outName ------------------
-testGT = "80X_dataRun2_HLT_v12"
+testGT = "92X_dataRun2_HLT_v7"
 testOutName = "dijetNtuple.root"
 
 ## ----------------- Global Tag ------------------
@@ -54,7 +54,7 @@ if variables.local == True:
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2016C/ScoutingCaloHT/RAW/v2/000/276/095/00000/A8255F4A-3E3F-E611-81C7-02163E0146CA.root' #2016C data
+        '/store/data/Run2017F/ScoutingCaloHT/RAW/v1/000/305/040/00000/48B963FD-53B0-E711-8CFD-02163E019CA4.root' # 2017F data
     )
 )
 
@@ -73,7 +73,7 @@ process.dijetscouting = cms.EDAnalyzer(
     ptMinAK4   = cms.double(10),
     rho        = cms.InputTag('hltScoutingCaloPacker:rho'),
     met        = cms.InputTag('hltScoutingCaloPacker:caloMetPt'),
-    vtx        = cms.InputTag('hltScoutingCaloPacker'),
+    vtx        = cms.InputTag('hltScoutingPrimaryVertexPackerCaloMuon','primaryVtx','HLT'),
     # ParkingScoutingMonitor
     doRECO     = cms.bool(False),
 
@@ -86,8 +86,9 @@ process.dijetscouting = cms.EDAnalyzer(
         hltResults            = cms.InputTag('TriggerResults','','HLT'),
         l1tResults            = cms.InputTag(''),
         daqPartitions         = cms.uint32(1),
-        l1tIgnoreMask         = cms.bool(False),
-        l1techIgnorePrescales = cms.bool(False),
+#        l1tIgnoreMask         = cms.bool(False), # obsolete
+#        l1techIgnorePrescales = cms.bool(False), # obsolete
+        l1tIgnoreMaskAndPrescale = cms.bool(False),
         throw                 = cms.bool(False)
     ),
 
@@ -98,12 +99,13 @@ process.dijetscouting = cms.EDAnalyzer(
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2Relative_AK4CaloHLT.txt'),
     L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L3Absolute_AK4CaloHLT.txt'),
 
+                                                                                              
     #L1 trigger info
     doL1 = cms.bool(True),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
     l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
-
+    ReadPrescalesFromFile = cms.bool(False),
     l1Seeds = cms.vstring(getL1Conf())
 )
 
