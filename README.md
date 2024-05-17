@@ -12,7 +12,7 @@ cmsenv
 Clone and compile repository:
 
 ```
-git clone git@github.com:syuvivida/DijetScoutingRootTreeMaker.git
+git clone git@github.com:syuvivida/DijetScoutingRootTreeMaker.git CMSDIJET/DijetScoutingRootTreeMaker
 scram b -j4
 ```
 
