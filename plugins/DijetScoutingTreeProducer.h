@@ -12,16 +12,20 @@
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/Scouting/interface/ScoutingElectron.h"
-#include "DataFormats/Scouting/interface/ScoutingMuon.h"
-#include "DataFormats/Scouting/interface/ScoutingParticle.h"
-#include "DataFormats/Scouting/interface/ScoutingPFJet.h"
-#include "DataFormats/Scouting/interface/ScoutingPhoton.h"
-#include "DataFormats/Scouting/interface/ScoutingVertex.h"
-#include "DataFormats/Scouting/interface/ScoutingCaloJet.h"
+
+// Run3 Scouting datasets
+#include "DataFormats/Scouting/interface/Run3ScoutingElectron.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingPhoton.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingPFJet.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingCaloJet.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingVertex.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingTrack.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingMuon.h"
+#include "DataFormats/Scouting/interface/Run3ScoutingParticle.h"
+//
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -39,7 +43,7 @@
 #include "TTree.h"
 
 
-class DijetScoutingTreeProducer : public edm::EDAnalyzer
+class DijetScoutingTreeProducer : public edm::one::EDAnalyzer<>
 {
 public:
     explicit DijetScoutingTreeProducer(edm::ParameterSet const& cfg);
@@ -69,10 +73,10 @@ private:
     FactorizedJetCorrector *JetCorrectorAK4reco_DATA;
     //---- configurable parameters --------
     double ptMinAK4_;
-    edm::EDGetTokenT<ScoutingPFJetCollection> srcJetsAK4_;
-    edm::EDGetTokenT<ScoutingVertexCollection> srcVrtx_;
+    edm::EDGetTokenT<Run3ScoutingPFJetCollection> srcJetsAK4_;
+    edm::EDGetTokenT<Run3ScoutingVertexCollection> srcVrtx_;
     edm::EDGetTokenT<double> srcRho_, srcMET_;
-    edm::EDGetTokenT<ScoutingParticleCollection> srcCandidates_;
+    edm::EDGetTokenT<Run3ScoutingParticleCollection> srcCandidates_;
     bool doRECO_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4reco_;
     edm::EDGetTokenT<reco::VertexCollection> srcVrtxreco_;
@@ -80,9 +84,8 @@ private:
     edm::EDGetTokenT<pat::METCollection> srcMETreco_;
     //For calo scouting
     bool doCalo_;
-    edm::EDGetTokenT<ScoutingCaloJetCollection> srcJetsAK4calo_;
+    edm::EDGetTokenT<Run3ScoutingCaloJetCollection> srcJetsAK4calo_;
     edm::EDGetTokenT<double> srcRhocalo_, srcMETcalo_;
-
     edm::Service<TFileService> fs_;
     TTree *outTree_;
 

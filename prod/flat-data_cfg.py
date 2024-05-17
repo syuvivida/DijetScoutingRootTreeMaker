@@ -8,12 +8,14 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ## ----------------- test GT and outName -----------------
-testGT = "80X_dataRun2_HLT_v12"
+testGT = "140X_dataRun3_HLT_v3"
 testOutName = "dijetNtuple.root"
 
 ## ----------------- Global Tag -----------------
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+#from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag.globaltag = "THISGLOBALTAG"
+#process.GlobalTag = GlobalTag(process.GlobalTag, testGT, '')
 
 #--------------------- Report and output ---------------------------   
 
@@ -44,7 +46,8 @@ variables.register('local',
 variables.parseArguments()
 
 if variables.local == True:
-    process.GlobalTag.globaltag = testGT
+    process.GlobalTag.globaltag = "140X_dataRun3_HLT_v3"
+#    process.GlobalTag = GlobalTag(process.GlobalTag, testGT, '')
     process.TFileService.fileName = cms.string(testOutName)
 
 
@@ -53,7 +56,8 @@ if variables.local == True:
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/ScoutingPFHT/RAW/v1/000/272/818/00000/FADDFD99-6515-E611-8136-02163E0136FF.root' #(2016B data)
+#        '/store/data/Run2016B/ScoutingPFHT/RAW/v1/000/272/818/00000/FADDFD99-6515-E611-8136-02163E0136FF.root' #(2016B data)
+        '/store/data/Run2024D/ScoutingPFRun3/HLTSCOUT/v1/000/380/812/00000/c45f8053-4eb9-4874-8555-b794f4dee8b5.root'
     )
 )
 
@@ -73,7 +77,7 @@ process.dijetscouting = cms.EDAnalyzer(
     ptMinAK4   = cms.double(10),
     rho        = cms.InputTag('hltScoutingPFPacker:rho'),
     met        = cms.InputTag('hltScoutingPFPacker:pfMetPt'),
-    vtx        = cms.InputTag('hltScoutingPFPacker'),
+    vtx        = cms.InputTag('hltScoutingPrimaryVertexPacker:primaryVtx'),
     candidates = cms.InputTag('hltScoutingPFPacker'),
     # ParkingScoutingMonitor
     doRECO     = cms.bool(False),
@@ -88,13 +92,17 @@ process.dijetscouting = cms.EDAnalyzer(
         hltResults            = cms.InputTag('TriggerResults','','HLT'),
         l1tResults            = cms.InputTag(''),
         daqPartitions         = cms.uint32(1),
+        ###
+        usePathStatus         = cms.bool( True ),
+        l1tIgnoreMaskAndPrescale = cms.bool( False ),
+        ###
         l1tIgnoreMask         = cms.bool(False),
         l1techIgnorePrescales = cms.bool(False),
         throw                 = cms.bool(False)
     ),
 
     ## JECs ################
-    doJECs = cms.bool(True),
+    doJECs = cms.bool(False),
 
     L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L1FastJet_AK4PFHLT.txt'),
     L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2Relative_AK4PFHLT.txt'),
@@ -102,7 +110,7 @@ process.dijetscouting = cms.EDAnalyzer(
     ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2L3Residual_AK4PFHLT.txt'),
 
     ## L1 trigger info ################
-    doL1 = cms.bool(True),
+    doL1 = cms.bool(False),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
     l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),

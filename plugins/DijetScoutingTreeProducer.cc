@@ -8,13 +8,13 @@ using namespace l1t;
 DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     doJECs_(cfg.getParameter<bool>("doJECs")),
     ptMinAK4_(cfg.getParameter<double>("ptMinAK4")),
-    srcJetsAK4_(consumes<ScoutingPFJetCollection>(
+    srcJetsAK4_(consumes<Run3ScoutingPFJetCollection>(
                     cfg.getParameter<InputTag>("jetsAK4"))),
-    srcVrtx_(consumes<ScoutingVertexCollection>(
+    srcVrtx_(consumes<Run3ScoutingVertexCollection>(
                  cfg.getParameter<InputTag>("vtx"))),
     srcRho_(consumes<double>(cfg.getParameter<InputTag>("rho"))),
     srcMET_(consumes<double>(cfg.getParameter<InputTag>("met"))),
-    srcCandidates_(consumes<ScoutingParticleCollection>(
+    srcCandidates_(consumes<Run3ScoutingParticleCollection>(
                        cfg.getParameter<InputTag>("candidates"))),
     doRECO_(cfg.getParameter<bool>("doRECO")),
     doCalo_(cfg.getParameter<bool>("doCalo")),
@@ -40,7 +40,7 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         vtriggerSelector_.push_back(triggerExpression::parse(
                                         vtriggerSelection_[i]));
     }
-
+    
     if (doJECs_) {
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4_DATA");
@@ -92,7 +92,7 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     }
 
     if (doCalo_) {
-        srcJetsAK4calo_ = consumes<ScoutingCaloJetCollection>(
+        srcJetsAK4calo_ = consumes<Run3ScoutingCaloJetCollection>(
             cfg.getParameter<InputTag>("jetsAK4calo"));
         srcRhocalo_ = consumes<double>(cfg.getParameter<InputTag>("rhocalo"));
         srcMETcalo_ = consumes<double>(cfg.getParameter<InputTag>("metcalo"));
@@ -420,7 +420,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
 
     // Get collections
 
-    Handle<ScoutingPFJetCollection> jetsAK4;
+    Handle<Run3ScoutingPFJetCollection> jetsAK4;
     iEvent.getByToken(srcJetsAK4_, jetsAK4);
     if (!jetsAK4.isValid()) {
         throw Exception(errors::ProductNotFound)
@@ -428,7 +428,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         return;
     }
 
-    Handle<ScoutingVertexCollection> vertices;
+    Handle<Run3ScoutingVertexCollection> vertices;
     iEvent.getByToken(srcVrtx_, vertices);
     if (!vertices.isValid()) {
         throw edm::Exception(edm::errors::ProductNotFound)
@@ -452,11 +452,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         return;
     }
 
-    Handle<ScoutingParticleCollection> candidates;
+    Handle<Run3ScoutingParticleCollection> candidates;
     iEvent.getByToken(srcCandidates_, candidates);
     if (!candidates.isValid()) {
         throw edm::Exception(edm::errors::ProductNotFound)
-            << "Could not find ScoutingParticleCollection." << endl;
+            << "Could not find Run3ScoutingParticleCollection." << endl;
         return;
     }
 
@@ -495,14 +495,14 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         }
     }
 
-    Handle<ScoutingCaloJetCollection> jetsAK4calo;
+    Handle<Run3ScoutingCaloJetCollection> jetsAK4calo;
     Handle<double> rhocalo;
     Handle<double> metcalo;
     if (doCalo_) {
         iEvent.getByToken(srcJetsAK4calo_, jetsAK4calo);
         if (!jetsAK4calo.isValid()) {
             throw Exception(errors::ProductNotFound)
-                << "Could not find ScoutingCaloJetCollection." << endl;
+                << "Could not find Run3ScoutingCaloJetCollection." << endl;
             return;
         }
 
@@ -535,8 +535,12 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     for (auto &candidate: *candidates) {
         sumEt += candidate.pt();
         TLorentzVector vector;
+        // vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
+        //                     candidate.m());
+	// Eiko: This needs to be fixed
+	std::cout << "Candidate PDG = " << candidate.pdgId() << std::endl;
         vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
-                            candidate.m());
+			    0.0);
         offline_met -= vector;
     }
     offMet_ = offline_met.Pt();
@@ -607,7 +611,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     if (doJECs_) {
         // Sort AK4 jets by increasing pT
         multimap<double, unsigned> sortedAK4Jets;
-        for (ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
+        for (Run3ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
              ijet!=jetsAK4->end(); ++ijet) {
             double correction = 1.0;
             JetCorrectorAK4_DATA->setJetEta(ijet->eta());
@@ -647,7 +651,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
             }
         }
     } else {
-        for (ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
+        for (Run3ScoutingPFJetCollection::const_iterator ijet=jetsAK4->begin();
              ijet!=jetsAK4->end(); ++ijet) {
             jecFactorsAK4.push_back(1.0);
             sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
@@ -663,7 +667,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     }
     //Do not apply JECs to calojets
     if (doCalo_) {
-        for (ScoutingCaloJetCollection::const_iterator ijet=jetsAK4calo->begin();
+        for (Run3ScoutingCaloJetCollection::const_iterator ijet=jetsAK4calo->begin();
                 ijet!=jetsAK4calo->end(); ++ijet) {
             jecFactorsAK4calo.push_back(1.0);
             sortedAK4caloJetIdx.push_back(ijet - jetsAK4calo->begin());
@@ -676,7 +680,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     vector<TLorentzVector> vP4AK4;
     for (vector<unsigned>::const_iterator i=sortedAK4JetIdx.begin();
          i!=sortedAK4JetIdx.end(); ++i) {
-        ScoutingPFJetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
+        Run3ScoutingPFJetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
         double jet_energy = ijet->photonEnergy() + ijet->chargedHadronEnergy()
                           + ijet->neutralHadronEnergy() + ijet->electronEnergy()
                           + ijet->muonEnergy();
@@ -869,7 +873,7 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         vector<TLorentzVector> vP4AK4calo;
         for (vector<unsigned>::const_iterator i=sortedAK4caloJetIdx.begin();
              i!=sortedAK4caloJetIdx.end(); ++i) {
-            ScoutingCaloJetCollection::const_iterator ijet = (jetsAK4calo->begin() + *i);
+            Run3ScoutingCaloJetCollection::const_iterator ijet = (jetsAK4calo->begin() + *i);
             double jet_energy = ijet->emEnergyInEB() + ijet->emEnergyInEE()
                               + ijet->emEnergyInHF() + ijet->hadEnergyInHB()
                               + ijet->hadEnergyInHE() + ijet->hadEnergyInHF();

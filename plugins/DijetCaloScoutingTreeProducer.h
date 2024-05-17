@@ -17,7 +17,7 @@
 #include "DataFormats/Scouting/interface/ScoutingVertex.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -34,8 +34,12 @@
 #include "TLorentzVector.h"
 #include "TTree.h"
 
+// If the analyzer does not use TFileService, please remove
+// the template argument to the base class so the class inherits
+// from  edm::one::EDAnalyzer<>
+// This will improve performance in multithreaded jobs.
 
-class DijetCaloScoutingTreeProducer : public edm::EDAnalyzer
+class DijetCaloScoutingTreeProducer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 {
 public:
     explicit DijetCaloScoutingTreeProducer(edm::ParameterSet const& cfg);
@@ -74,7 +78,6 @@ private:
     edm::EDGetTokenT<reco::VertexCollection> srcVrtxreco_;
     edm::EDGetTokenT<double> srcRhoreco_;
     edm::EDGetTokenT<pat::METCollection> srcMETreco_;
-    edm::Service<TFileService> fs_;
     TTree *outTree_;
 
     //---- TRIGGER -------------------------

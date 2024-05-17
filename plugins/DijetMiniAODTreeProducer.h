@@ -21,7 +21,7 @@
 #include "DataFormats/Scouting/interface/ScoutingVertex.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -39,7 +39,7 @@
 #include "TTree.h"
 
 
-class DijetMiniAODTreeProducer : public edm::EDAnalyzer
+class DijetMiniAODTreeProducer  : public edm::one::EDAnalyzer<edm::one::SharedResources>
 {
 public:
     explicit DijetMiniAODTreeProducer(edm::ParameterSet const& cfg);
@@ -76,7 +76,6 @@ private:
     edm::EDGetTokenT<std::vector<PileupSummaryInfo>> srcPU_;
     edm::EDGetTokenT<GenEventInfoProduct> srcGenInfo_;
     edm::EDGetTokenT<reco::GenParticleCollection> srcPrunedGenParticles_;
-    edm::Service<TFileService> fs_;
     TTree *outTree_;
 
     //---- TRIGGER -------------------------

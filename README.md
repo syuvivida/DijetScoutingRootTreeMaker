@@ -1,20 +1,18 @@
 DijetScoutingRootTreeMaker
 ==========================
 
-Information: https://twiki.cern.ch/twiki/bin/viewauth/CMS/ExoDijet13TeV#Analysis_code_data_scouting_anal
-
-To run over MC MINIAOD with Scouting content in 94x, setup release:
+To run over data with Scouting content in 140x, setup release:
 
 ```
-cmsrel CMSSW_9_4_0
-cd CMSSW_9_4_0/src/
+cmsrel CMSSW_14_0_6
+cd CMSSW_14_0_6/src/
 cmsenv
 ```
 
 Clone and compile repository:
 
 ```
-git clone https://github.com/CMSDIJET/DijetScoutingRootTreeMaker.git CMSDIJET/DijetScoutingRootTreeMaker
+git clone git@github.com:syuvivida/DijetScoutingRootTreeMaker.git
 scram b -j4
 ```
 
@@ -22,7 +20,7 @@ Run with:
 
 ```
 cd CMSDIJET/DijetScoutingRootTreeMaker/prod/
-cmsRun flat-MC-calo_cfg.py local=True
+cmsRun flat-data_cfg.py local=True
 ```
 
 Use the configuration file `flat-data-monitor_cfg.py` to run over the ParkingScoutingMonitor datasets.

@@ -44,7 +44,7 @@ DijetMiniAODTreeProducer::DijetMiniAODTreeProducer(const ParameterSet& cfg):
         vtriggerSelector_.push_back(triggerExpression::parse(
                                         vtriggerSelection_[i]));
     }
-
+    usesResource("TFileService");
     if (redoJECs_) {
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4reco_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4reco_DATA");
@@ -84,6 +84,7 @@ DijetMiniAODTreeProducer::~DijetMiniAODTreeProducer()
 
 void DijetMiniAODTreeProducer::beginJob()
 {
+    edm::Service<TFileService> fs_;
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
     triggerNamesHisto_->SetCanExtend(TH1::kAllAxes);
