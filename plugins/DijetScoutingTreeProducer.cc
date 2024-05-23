@@ -6,6 +6,7 @@ using namespace l1t;
 
 
 DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
+    debug_(cfg.getParameter<bool>("debug")),
     doJECs_(cfg.getParameter<bool>("doJECs")),
     ptMinAK4_(cfg.getParameter<double>("ptMinAK4")),
     srcJetsAK4_(consumes<Run3ScoutingPFJetCollection>(
@@ -26,6 +27,8 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
     vtriggerDuplicates_(cfg.getParameter<vector<int>>("triggerDuplicates")),
     doL1_(cfg.getParameter<bool>("doL1"))
 {
+    if(debug_)
+      std::cout << "Inside DijetScoutingTreeProducer::DijetScoutingTreeProducer" << std::endl;
     if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
         cout << "ERROR: The number of trigger aliases does not match the number of trigger names!!!"
              << endl;
@@ -40,7 +43,8 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         vtriggerSelector_.push_back(triggerExpression::parse(
                                         vtriggerSelection_[i]));
     }
-    
+
+    usesResource("TFileService");
     if (doJECs_) {
         L1corrAK4_DATA_ = cfg.getParameter<FileInPath>("L1corrAK4_DATA");
         L2corrAK4_DATA_ = cfg.getParameter<FileInPath>("L2corrAK4_DATA");
@@ -107,15 +111,46 @@ DijetScoutingTreeProducer::DijetScoutingTreeProducer(const ParameterSet& cfg):
         l1Seeds_ = std::vector<std::string>();
         l1GtUtils_ = 0;
     }
+
+    if(debug_)
+      std::cout << "Exit DijetScoutingTreeProducer::DijetScoutingTreeProducer" << std::endl;
+
 }
 
 DijetScoutingTreeProducer::~DijetScoutingTreeProducer()
 {
+  if(debug_)
+    std::cout << "Inside DijetScoutingTreeProducer::~DijetScoutingTreeProducer" << std::endl;
+  
+  if (doJECs_) {
+    delete L1ParAK4_DATA;
+    delete L2ParAK4_DATA;
+    delete L3ParAK4_DATA;
+    delete L2L3ResAK4_DATA;
+    delete JetCorrectorAK4_DATA;
+    if (doRECO_) {
+      delete L1ParAK4reco_DATA;
+      delete L2ParAK4reco_DATA;
+      delete L3ParAK4reco_DATA;
+      delete L2L3ResAK4reco_DATA;
+      delete JetCorrectorAK4reco_DATA;
+    } // if doRECO_
+  } // if doJEC_
+
+  if (doL1_) {
+    delete l1GtUtils_;
+  } // doL1_
+  if(debug_)
+    std::cout << "Exiting DijetScoutingTreeProducer::~DijetScoutingTreeProducer" << std::endl;
 }
 
 
 void DijetScoutingTreeProducer::beginJob()
 {
+    if(debug_)
+      std::cout << "Inside DijetScoutingTreeProducer::beginJob" << std::endl;
+
+    edm::Service<TFileService> fs_;
     //--- book the trigger histograms ---------
     triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames", "TriggerNames", 1, 0, 1);
     triggerNamesHisto_->SetCanExtend(TH1::kAllAxes);
@@ -329,11 +364,16 @@ void DijetScoutingTreeProducer::beginJob()
     l1Result_ = new vector<bool>;
     outTree_->Branch("triggerResult", "vector<bool>", &triggerResult_);
     outTree_->Branch("l1Result", "vector<bool>", &l1Result_);
+    if(debug_)
+      std::cout << "Exit DijetScoutingTreeProducer::beginJob" << std::endl;
 }
 
 
 void DijetScoutingTreeProducer::endJob()
 {
+    if(debug_)
+      std::cout << "Inside DijetScoutingTreeProducer::endJob" << std::endl;
+
     delete triggerResult_;
     delete l1Result_;
 
@@ -410,12 +450,17 @@ void DijetScoutingTreeProducer::endJob()
     for(unsigned i=0; i<vtriggerSelector_.size(); ++i) {
         delete vtriggerSelector_[i];
     }
+    if(debug_)
+      std::cout << "Exit DijetScoutingTreeProducer::endJob" << std::endl;
 }
 
 
 void DijetScoutingTreeProducer::analyze(const Event& iEvent,
                                         const EventSetup& iSetup)
 {
+    if(debug_)
+      std::cout << "Inside DijetScoutingTreeProducer::analyze" << std::endl;
+
     initialize();
 
     // Get collections
@@ -538,9 +583,11 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
         // vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
         //                     candidate.m());
 	// Eiko: This needs to be fixed
-	std::cout << "Candidate PDG = " << candidate.pdgId() << std::endl;
+	// std::cout << "Now trying to access pdgId" << std::endl;
+	// std::cout << "Candidate PDG = " << candidate.pdgId() << std::endl;
         vector.SetPtEtaPhiM(candidate.pt(), candidate.eta(), candidate.phi(),
-			    0.0);
+			    pdgIdToMass(candidate.pdgId()));
+	// std::cout << "Vector pt  = " << vector.Pt() << std::endl;
         offline_met -= vector;
     }
     offMet_ = offline_met.Pt();
@@ -928,11 +975,15 @@ void DijetScoutingTreeProducer::analyze(const Event& iEvent,
     //---- Fill Tree ---
     outTree_->Fill();
     //------------------
+    if(debug_)
+      std::cout << "Exit DijetScoutingTreeProducer::analyze" << std::endl;
 }
 
 
 void DijetScoutingTreeProducer::initialize()
 {
+    if(debug_)
+      std::cout << "Inside DijetScoutingTreeProducer::initialize" << std::endl;  
     isData_       = -999;
     run_          = -999;
     evt_          = -999;
@@ -1045,7 +1096,31 @@ void DijetScoutingTreeProducer::initialize()
 
     triggerResult_->clear();
     l1Result_->clear();
+    if(debug_)
+      std::cout << "Exit DijetScoutingTreeProducer::initialize" << std::endl;  
 }
+
+double DijetScoutingTreeProducer::pdgIdToMass(int pdgId)
+{
+  // std::cout << "Inside DijetScoutingTreeProducer::pdgIdToMass" << std::endl;  
+  switch (std::abs(pdgId)) {
+    case 211:
+      return 139.57039e-3;
+    case 11:
+      return 0.51099895e-3;
+    case 13:
+      return 105.6583755e-3;
+    case 22:
+      return 0.0;
+    case 130:
+      return 497.611e-3;
+    default:
+      return 0.0;
+  }
+}
+
+
+
 
 
 DEFINE_FWK_MODULE(DijetScoutingTreeProducer);

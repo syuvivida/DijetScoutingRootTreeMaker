@@ -19,6 +19,7 @@ process.GlobalTag.globaltag = "THISGLOBALTAG"
 
 #--------------------- Report and output ---------------------------   
 
+#process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(527953))
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -32,6 +33,7 @@ process.TFileService=cms.Service("TFileService",
 process.options = cms.untracked.PSet(
         allowUnscheduled = cms.untracked.bool(True),
         wantSummary = cms.untracked.bool(False),
+        TryToContinue = cms.untracked.vstring('ProductNotFound')
 )
 
 ## ---------------- Interactive testing-----------------
@@ -56,8 +58,13 @@ if variables.local == True:
 process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
-#        '/store/data/Run2016B/ScoutingPFHT/RAW/v1/000/272/818/00000/FADDFD99-6515-E611-8136-02163E0136FF.root' #(2016B data)
-        '/store/data/Run2024D/ScoutingPFRun3/HLTSCOUT/v1/000/380/812/00000/c45f8053-4eb9-4874-8555-b794f4dee8b5.root'
+        # from /ScoutingPFRun3/Run2024D-v1/HLTSCOUT
+#        '/store/data/Run2024D/ScoutingPFRun3/HLTSCOUT/v1/000/380/812/00000/c45f8053-4eb9-4874-8555-b794f4dee8b5.root'
+        '/store/data/Run2024D/ScoutingPFRun3/HLTSCOUT/v1/000/380/470/00001/f5bfccdb-051f-4bf9-bffa-7999a81a445f.root'
+        # from /ScoutingPFRun3/Run2022C-v1/RAW
+#         '/store/data/Run2022C/ScoutingPFRun3/RAW/v1/000/357/479/00000/9f6a87ef-50db-4fc6-8b5f-88c72d51d434.root'
+        # from /ScoutingPFMonitor/Run2024D-v1/RAW, /ScoutingPFMonitor/Run2024D-PromptReco-v1/MINIAOD
+#        '/store/data/Run2024D/ScoutingPFMonitor/MINIAOD/PromptReco-v1/000/380/470/00000/58cd27e9-492b-4b9a-a42e-7c61cb700f47.root'
     )
 )
 
@@ -72,6 +79,8 @@ from CMSDIJET.DijetScoutingRootTreeMaker.TriggerPaths_cfi import getHLTConf, get
 
 process.dijetscouting = cms.EDAnalyzer(
     'DijetScoutingTreeProducer',
+    ### Print more information
+    debug      = cms.bool(False),    
     ## JETS/MET ########################################
     jetsAK4    = cms.InputTag('hltScoutingPFPacker'),
     ptMinAK4   = cms.double(10),
@@ -102,19 +111,20 @@ process.dijetscouting = cms.EDAnalyzer(
     ),
 
     ## JECs ################
-    doJECs = cms.bool(False),
+    doJECs = cms.bool(True),
 
-    L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L1FastJet_AK4PFHLT.txt'),
-    L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2Relative_AK4PFHLT.txt'),
-    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L3Absolute_AK4PFHLT.txt'),
-    ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/80X_dataRun2_HLT_v12/80X_dataRun2_HLT_v12_L2L3Residual_AK4PFHLT.txt'),
+    L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer22_22Sep2023_RunCD_V2_DATA/Summer22_22Sep2023_RunCD_V2_DATA_L1FastJet_AK4PFPuppi.txt'),
+    L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer22_22Sep2023_RunCD_V2_DATA/Summer22_22Sep2023_RunCD_V2_DATA_L2Relative_AK4PFPuppi.txt'),
+    L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer22_22Sep2023_RunCD_V2_DATA/Summer22_22Sep2023_RunCD_V2_DATA_L3Absolute_AK4PFPuppi.txt'),
+    ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetScoutingRootTreeMaker/data/Summer22_22Sep2023_RunCD_V2_DATA/Summer22_22Sep2023_RunCD_V2_DATA_L2L3Residual_AK4PFPuppi.txt'),
 
     ## L1 trigger info ################
+    ## only available for PFMonitoring dataset
     doL1 = cms.bool(False),
     AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
     l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
-
+    ReadPrescalesFromFile = cms.bool(False), # added by Eiko
     l1Seeds = cms.vstring(getL1Conf())
 )
 

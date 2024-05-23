@@ -43,7 +43,8 @@
 #include "TTree.h"
 
 
-class DijetScoutingTreeProducer : public edm::one::EDAnalyzer<>
+//class DijetScoutingTreeProducer : public edm::one::EDAnalyzer<>
+class DijetScoutingTreeProducer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 {
 public:
     explicit DijetScoutingTreeProducer(edm::ParameterSet const& cfg);
@@ -55,6 +56,10 @@ private:
     virtual void endJob();
 
     void initialize();
+   // to convert pdgId from PF particle to the corresponding mass
+    double pdgIdToMass(int pdgId); 
+    // print out the functions during the job
+    bool debug_;
     // For JECs
     bool doJECs_;
     edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_,
@@ -86,7 +91,7 @@ private:
     bool doCalo_;
     edm::EDGetTokenT<Run3ScoutingCaloJetCollection> srcJetsAK4calo_;
     edm::EDGetTokenT<double> srcRhocalo_, srcMETcalo_;
-    edm::Service<TFileService> fs_;
+  //    edm::Service<TFileService> fs_;
     TTree *outTree_;
 
     //---- TRIGGER -------------------------
