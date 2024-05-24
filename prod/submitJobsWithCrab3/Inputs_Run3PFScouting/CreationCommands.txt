@@ -1,0 +1,9 @@
+#-----------------------------------------------------------
+#  Main scouting dataset
+#-----------------------------------------------------------
+
+# Run2024C-v1
+python3 createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFRun3_Run2024C-v1 -i Inputs_Run3PFScouting/InputList_Run2024C_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit
+
+# Run2024D-v1
+python3 createAndSubmitCrab.py -d Output_ScoutingPFHT -v ScoutingPFRun3_Run2024D-v1 -i Inputs_Run3PFScouting/InputList_Run2024D_ScoutingPFHT.txt -t crab3_template_data.py -c ../flat-data_cfg.py --submit

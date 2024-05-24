@@ -7,7 +7,7 @@ import datetime
 import re
 
 usage = "usage: python createAndSubmitCrab.py -d Output_ScoutingPFHT/ -v Run2015D_ScoutingPFHT -i Inputs_ScoutingPFHT/InputList_Run2015D_ScoutingPFHT.txt -t Inputs_MC2014_Test/crab3_template.py -c ../flat-data_cfg.py --submit"
-print usage
+print(usage)
 
 parser = argparse.ArgumentParser(description='Process options.')
 
@@ -38,7 +38,7 @@ parser.add_argument("--submit",  action="store_true", dest="submit", default=Fal
 
 
 args = parser.parse_args()
-print args
+print(args)
 
 inputList = args.inputList
 storagedir = args.storagedir
@@ -83,16 +83,16 @@ for line in ins:
     if (line.startswith("#")):
         continue
 
-    print "line : "+line
-    print "dataset : "+dataset
-    print "processedevents : "+processedevents
-    print "lumisperjob : "+lumisperjob
-    print "globaltag : "+globaltag
+    print("line : "+line)
+    print("dataset : "+dataset)
+    print("processedevents : "+processedevents)
+    print("lumisperjob : "+lumisperjob)
+    print("globaltag : "+globaltag)
     if secondarydataset != "":
-        print "secondarydataset: "+secondarydataset
+        print("secondarydataset: "+secondarydataset)
 
     sample = dataset.split("/")[1]
-    print sample
+    print(sample)
 
 
     dict = {
@@ -115,7 +115,7 @@ for line in ins:
             for line_ in fin:
 	        #fout.write(line_)
 	        #line_=line_.strip() #Francesco (keep same python file indentation)
-                for k,v in dict.items():
+                for k,v in list(dict.items()):
                     line_ = re.sub(k,v,line_)
                 fout.write(line_)
 
@@ -126,12 +126,12 @@ for line in ins:
         with open(template_crab, "rt") as fin:
             for line_ in fin:
                 line_=line_.strip()
-                for k,v in dict.items():
+                for k,v in list(dict.items()):
                     line_ = re.sub(k,v,line_)
                 fout.write(line_+"\n")
 
     if submit:
-        print "Submitting jobs....."
+        print("Submitting jobs.....")
         #print crab_cfgfile
         os.system("crab submit -c "+crab_cfgfile)
 
